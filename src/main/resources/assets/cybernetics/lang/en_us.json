@@ -1,0 +1,27 @@
+{
+	"menu.cybernetics.operating_table": "Operating Table",
+
+	"cybernetics_group.brain": "Brain",
+	"cybernetics_group.eyes": "Eyes",
+	"cybernetics_group.spine": "Spine",
+	"cybernetics_group.arms": "Arms",
+	"cybernetics_group.legs": "Legs",
+	"cybernetics_group.augments": "Augments",
+
+	"block.cybernetics.white_operating_table": "White Operating Table",
+	"block.cybernetics.orange_operating_table": "Orange Operating Table",
+	"block.cybernetics.magenta_operating_table": "Magenta Operating Table",
+	"block.cybernetics.light_blue_operating_table": "Light Blue Operating Table",
+	"block.cybernetics.yellow_operating_table": "Yellow Operating Table",
+	"block.cybernetics.lime_operating_table": "Lime Operating Table",
+	"block.cybernetics.pink_operating_table": "Pink Operating Table",
+	"block.cybernetics.gray_operating_table": "Gray Operating Table",
+	"block.cybernetics.light_gray_operating_table": "Light Gray Operating Table",
+	"block.cybernetics.cyan_operating_table": "Cyan Operating Table",
+	"block.cybernetics.purple_operating_table": "Purple Operating Table",
+	"block.cybernetics.blue_operating_table": "Blue Operating Table",
+	"block.cybernetics.brown_operating_table": "Brown Operating Table",
+	"block.cybernetics.green_operating_table": "Green Operating Table",
+	"block.cybernetics.red_operating_table": "Red Operating Table",
+	"block.cybernetics.black_operating_table": "Black Operating Table"
+}
