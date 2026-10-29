@@ -3,7 +3,7 @@
 
 	"cybernetics_group.brain": "Brain",
 	"cybernetics_group.eyes": "Eyes",
-	"cybernetics_group.spine": "Spine",
+	"cybernetics_group.spine": "Nervous System",
 	"cybernetics_group.arms": "Arms",
 	"cybernetics_group.legs": "Legs",
 	"cybernetics_group.augments": "Augments",
@@ -23,5 +23,16 @@
 	"block.cybernetics.brown_operating_table": "Brown Operating Table",
 	"block.cybernetics.green_operating_table": "Green Operating Table",
 	"block.cybernetics.red_operating_table": "Red Operating Table",
-	"block.cybernetics.black_operating_table": "Black Operating Table"
+	"block.cybernetics.black_operating_table": "Black Operating Table",
+
+	"item.cybernetics.cyber_eyes": "Cyber Eyes",
+
+	"tag.cybernetics.cybernetic_type.eye": "Any Cyber Eyes",
+	"tag.cybernetics.cybernetic_type.bone": "Any Bone Augments",
+
+	"tooltip.cybernetics.slot": "Equippable in: %s",
+	"tooltip.cybernetics.required": "Requires %s",
+	"tooltip.cybernetics.forbidden": "Incompatible with %s",
+	"tooltip.cybernetics.capacity_cost": "Cybernetic Load: %s",
+	"tooltip.cybernetics.modifiers": "When Equipped:"
 }

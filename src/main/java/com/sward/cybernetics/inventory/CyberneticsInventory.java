@@ -2,7 +2,8 @@ package com.sward.cybernetics.inventory;
 
 import com.sward.cybernetics.CyberConfig;
 import com.sward.cybernetics.capabilities.ICyberneticsInventory;
-import com.sward.cybernetics.data.CyberneticsSlotDefinition;
+import com.sward.cybernetics.data.CyberneticsSlotGroup;
+import com.sward.cybernetics.items.CyberneticItem;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -15,15 +16,16 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
-
-import static com.sward.cybernetics.Cybernetics.id;
+import java.util.Map;
 
 @FieldsAreNonnullByDefault
 @ParametersAreNonnullByDefault
@@ -31,32 +33,36 @@ import static com.sward.cybernetics.Cybernetics.id;
 public class CyberneticsInventory implements ICyberneticsInventory
 {
 	public final List<NonNullList<ItemStack>> compartments = new ObjectArrayList<>();
-	public final Object2IntMap<TagKey<Item>> groupIndices = new Object2IntOpenHashMap<>();
+	public final Object2IntMap<String> groupIndices = new Object2IntOpenHashMap<>();
 	public final int containerSize;
 	public final Player player;
 
 	@Getter
 	private int timesChanged;
 
+	private final NonNullList<ItemStack> previousStacks;
+
 	public CyberneticsInventory(Player player)
 	{
 		int containerSize = 0;
 
-		List<CyberneticsSlotDefinition> slotDefinitions = CyberConfig.Server.getSlotDefinitions();
+		List<CyberneticsSlotGroup> groups = CyberConfig.Server.getSlotGroups();
 
-		for (int i = 0; i < slotDefinitions.size(); i++)
+		for (int i = 0; i < groups.size(); i++)
 		{
-			CyberneticsSlotDefinition definition = slotDefinitions.get(i);
+			CyberneticsSlotGroup group = groups.get(i);
 
-			this.compartments.add(NonNullList.withSize(definition.slotCount(), ItemStack.EMPTY));
+			this.compartments.add(NonNullList.withSize(group.slotCount(), ItemStack.EMPTY));
 
-			this.groupIndices.put(definition.id(), i);
+			this.groupIndices.put(group.id(), i);
 
-			containerSize += definition.slotCount();
+			containerSize += group.slotCount();
 		}
 
 		this.containerSize = containerSize;
 		this.player = player;
+
+		this.previousStacks = NonNullList.withSize(containerSize, ItemStack.EMPTY);
 	}
 
 	@Override
@@ -152,6 +158,56 @@ public class CyberneticsInventory implements ICyberneticsInventory
 	public void setChanged()
 	{
 		++this.timesChanged;
+
+		if (!this.player.level().isClientSide)
+		{
+			int i = 0;
+
+			for (NonNullList<ItemStack> items : this.compartments)
+			{
+				for (ItemStack stack : items)
+				{
+					ItemStack prevStack = this.previousStacks.get(i);
+
+					if (!ItemStack.isSameItem(prevStack, stack))
+					{
+						if (prevStack.getItem() instanceof CyberneticItem prevItem)
+						{
+							for (Map.Entry<Attribute, AttributeModifier> entry : prevItem.attributes.entries())
+							{
+								AttributeInstance attribute = this.player.getAttribute(entry.getKey());
+
+								if (attribute == null)
+								{
+									continue;
+								}
+
+								attribute.removeModifier(entry.getValue().getId());
+							}
+						}
+
+						if (stack.getItem() instanceof CyberneticItem newItem)
+						{
+							for (Map.Entry<Attribute, AttributeModifier> entry : newItem.attributes.entries())
+							{
+								AttributeInstance attribute = this.player.getAttribute(entry.getKey());
+
+								if (attribute == null)
+								{
+									continue;
+								}
+
+								attribute.addTransientModifier(entry.getValue());
+							}
+						}
+
+						this.previousStacks.set(i, stack.copy());
+					}
+
+					++i;
+				}
+			}
+		}
 	}
 
 	@Override
@@ -206,7 +262,7 @@ public class CyberneticsInventory implements ICyberneticsInventory
 	{
 		CompoundTag result = new CompoundTag();
 
-		for (Object2IntMap.Entry<TagKey<Item>> group : this.groupIndices.object2IntEntrySet())
+		for (Object2IntMap.Entry<String> group : this.groupIndices.object2IntEntrySet())
 		{
 			ListTag list = new ListTag();
 
@@ -217,7 +273,7 @@ public class CyberneticsInventory implements ICyberneticsInventory
 				list.add(ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, stack).get().orThrow());
 			}
 
-			result.put(group.getKey().location().getPath(), list);
+			result.put(group.getKey(), list);
 		}
 
 		return result;
@@ -228,14 +284,12 @@ public class CyberneticsInventory implements ICyberneticsInventory
 	{
 		for (String key : nbt.getAllKeys())
 		{
-			TagKey<Item> id = TagKey.create(ForgeRegistries.ITEMS.getRegistryKey(), id(key));
-
-			if (!this.groupIndices.containsKey(id))
+			if (!this.groupIndices.containsKey(key))
 			{
 				continue;
 			}
 
-			NonNullList<ItemStack> items = this.compartments.get(this.groupIndices.getInt(id));
+			NonNullList<ItemStack> items = this.compartments.get(this.groupIndices.getInt(key));
 
 			ListTag listTag = nbt.getList(key, ListTag.TAG_COMPOUND);
 
@@ -244,6 +298,16 @@ public class CyberneticsInventory implements ICyberneticsInventory
 			for (int i = 0; i < count; ++i)
 			{
 				items.set(i, ItemStack.CODEC.parse(NbtOps.INSTANCE, listTag.get(i)).get().orThrow());
+			}
+		}
+
+		int i = 0;
+
+		for (NonNullList<ItemStack> items : this.compartments)
+		{
+			for (ItemStack stack : items)
+			{
+				this.previousStacks.set(i++, stack.copy());
 			}
 		}
 	}

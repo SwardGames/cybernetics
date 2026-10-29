@@ -10,9 +10,11 @@ import com.sward.cybernetics.items.CyberItems;
 import com.sward.cybernetics.inventory.CyberMenuTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -37,12 +39,19 @@ public final class Cybernetics
 
 		ctx.registerConfig(ModConfig.Type.SERVER, CyberConfig.Server.SPEC);
 
+		modEventBus.addListener(Cybernetics::attributeModification);
+
 		MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, Cybernetics::attachEntityCapabilities);
 	}
 
 	public static ResourceLocation id(String path)
 	{
 		return ResourceLocation.fromNamespaceAndPath(ID, path);
+	}
+
+	private static void attributeModification(EntityAttributeModificationEvent e)
+	{
+		e.add(EntityType.PLAYER, CyberAttributes.CAPACITY.get());
 	}
 
 	private static void attachEntityCapabilities(AttachCapabilitiesEvent<Entity> e)

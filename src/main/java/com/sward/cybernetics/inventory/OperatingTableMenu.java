@@ -1,8 +1,7 @@
 package com.sward.cybernetics.inventory;
 
 import com.sward.cybernetics.CyberConfig;
-import com.sward.cybernetics.data.CyberneticsSlotDefinition;
-import com.sward.cybernetics.items.CyberneticItem;
+import com.sward.cybernetics.data.CyberneticsSlotGroup;
 import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.world.Container;
@@ -26,9 +25,9 @@ public class OperatingTableMenu extends AbstractContainerMenu
 			containerId,
 			playerInv,
 			new SimpleContainer(
-				CyberConfig.Server.getSlotDefinitions()
+				CyberConfig.Server.getSlotGroups()
 					.stream()
-					.mapToInt(CyberneticsSlotDefinition::slotCount)
+					.mapToInt(CyberneticsSlotGroup::slotCount)
 					.sum()
 			)
 		);
@@ -39,20 +38,20 @@ public class OperatingTableMenu extends AbstractContainerMenu
 		super(CyberMenuTypes.OPERATING_TABLE.get(), containerId);
 
 		int z = 0;
-		int l = 17 + 11;
-		int r = 17 + 11;
+		int l = 15 + 11;
+		int r = 15 + 11;
 
-		for (CyberneticsSlotDefinition definition : CyberConfig.Server.getSlotDefinitions())
+		for (CyberneticsSlotGroup group : CyberConfig.Server.getSlotGroups())
 		{
-			int slotCount = definition.slotCount();
-			boolean onRight = definition.onRight();
+			int slotCount = group.slotCount();
+			boolean onRight = group.onRight();
 
-			int x0 = onRight ? 8 : 116;
+			int x0 = onRight ? 116 : 8;
 			int y0 = onRight ? r : l;
 
 			for (int j = 0; j < slotCount; ++j)
 			{
-				this.addSlot(new CyberneticSlot(cyberInv, z, x0 + (j % 3) * 18, y0 + (j / 3) * 18, definition.id(), j));
+				this.addSlot(new CyberneticSlot(cyberInv, z, x0 + (j % 3) * 18, y0 + (j / 3) * 18, group.id(), j));
 
 				++z;
 			}

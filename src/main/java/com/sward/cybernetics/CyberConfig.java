@@ -1,19 +1,19 @@
 package com.sward.cybernetics;
 
-import com.electronwill.nightconfig.core.Config;
-import com.google.common.base.Predicates;
-import com.sward.cybernetics.data.CyberneticsSlotDefinition;
+import com.google.common.collect.ImmutableList;
+import com.sward.cybernetics.data.CyberneticsSlotGroup;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.sward.cybernetics.Cybernetics.ID;
-import static com.sward.cybernetics.Cybernetics.id;
 
 @Mod.EventBusSubscriber(modid = ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class CyberConfig
@@ -22,49 +22,62 @@ public class CyberConfig
 	{
 		private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
-		private static final ForgeConfigSpec.ConfigValue<List<? extends String>> SLOT_DEFINITIONS = BUILDER
+		private static final ForgeConfigSpec.ConfigValue<List<? extends String>> SLOT_GROUPS_SPEC = BUILDER
 			.comment(
-				"The cybernetic slots available to the player.",
-				"The format of a slot is 'id slot_count side'.",
-				"'id' must be a valid resource location path and will determine the tag needed for a cybernetic component to be placed into that slot.",
+				"The cybernetic slot groups available to the player.",
+				"The format of a slot is 'id slot_count side has_primary_slot'.",
+				"'id' is a valid resource location path and determines the tag needed for a cybernetic component to be placed into that slot.",
 				"'slot_count' is the number of slots and must be a positive integer.",
-				"'side' is the side of the operating table the slots appear on and can be 'left' or 'right'."
+				"'side' is the side of the operating table the slots appear on and can be 'left' or 'right'.",
+				"'primary_slot_icon' is a valid resource location path and determines the icon used for the primary (first) slot."
 			)
 			.worldRestart()
 			.defineList(
-				"cybernetic_slots",
+				"cybernetic_slot_groups",
 				List.of(
-					toConfig(new CyberneticsSlotDefinition(ItemTags.create(id("brain")), 3, true)),
-					toConfig(new CyberneticsSlotDefinition(ItemTags.create(id("eyes")), 3, true)),
-					toConfig(new CyberneticsSlotDefinition(ItemTags.create(id("spine")), 3, false)),
-					toConfig(new CyberneticsSlotDefinition(ItemTags.create(id("arms")), 3, false)),
-					toConfig(new CyberneticsSlotDefinition(ItemTags.create(id("legs")), 3, false)),
-					toConfig(new CyberneticsSlotDefinition(ItemTags.create(id("augments")), 5, true))
+					toConfig(new CyberneticsSlotGroup("brain", 3, true, "brain")),
+					toConfig(new CyberneticsSlotGroup("eyes", 3, true, "eyes")),
+					toConfig(new CyberneticsSlotGroup("spine", 3, false, "spine")),
+					toConfig(new CyberneticsSlotGroup("arms", 3, false, "arms")),
+					toConfig(new CyberneticsSlotGroup("legs", 3, false, "legs")),
+					toConfig(new CyberneticsSlotGroup("augments", 5, true, null))
 				),
 				e -> e instanceof String s && fromConfig(s) != null
 			);
 
-		private static List<CyberneticsSlotDefinition> SLOT_DEFINITIONS_VALUE;
-
 		static final ForgeConfigSpec SPEC = BUILDER.build();
 
-		public static List<CyberneticsSlotDefinition> getSlotDefinitions()
+		private static ImmutableList<CyberneticsSlotGroup> SLOT_GROUPS;
+		private static Map<String, CyberneticsSlotGroup> SLOT_GROUPS_MAP;
+
+		public static ImmutableList<CyberneticsSlotGroup> getSlotGroups()
 		{
-			return SLOT_DEFINITIONS_VALUE;
+			return SLOT_GROUPS;
+		}
+
+		public static CyberneticsSlotGroup getSlotGroup(String name)
+		{
+			return SLOT_GROUPS_MAP.get(name);
 		}
 	}
 
 	@SubscribeEvent
 	static void onLoad(final ModConfigEvent event)
 	{
-		Server.SLOT_DEFINITIONS_VALUE = Server.SLOT_DEFINITIONS.get().stream().map(CyberConfig::fromConfig).toList();
+		Server.SLOT_GROUPS = Server.SLOT_GROUPS_SPEC.get()
+			.stream()
+			.map(CyberConfig::fromConfig)
+			.collect(ImmutableList.toImmutableList());
+
+		Server.SLOT_GROUPS_MAP = Server.SLOT_GROUPS.stream()
+			.collect(Collectors.toMap(CyberneticsSlotGroup::id, Function.identity()));
 	}
 
-	private static CyberneticsSlotDefinition fromConfig(String config)
+	private static CyberneticsSlotGroup fromConfig(String config)
 	{
 		String[] split = config.split(" ");
 
-		if (split.length != 3)
+		if (split.length != 3 && split.length != 4)
 		{
 			return null;
 		}
@@ -107,11 +120,20 @@ public class CyberConfig
 			}
 		}
 
-		return new CyberneticsSlotDefinition(ItemTags.create(id(id)), slotCount, onRight);
+		String primarySlotIcon = split.length == 4 ? split[3] : null;
+
+		return new CyberneticsSlotGroup(id, slotCount, onRight, primarySlotIcon);
 	}
 
-	private static String toConfig(CyberneticsSlotDefinition slot)
+	private static String toConfig(CyberneticsSlotGroup group)
 	{
-		return slot.id().location().getPath() + " " + slot.slotCount() + " " + (slot.onRight() ? "right" : "left");
+		String config = group.id() + " " + group.slotCount() + " " + (group.onRight() ? "right" : "left");
+
+		if (group.primarySlotIcon() != null)
+		{
+			config += " " + group.primarySlotIcon();
+		}
+
+		return config;
 	}
 }

@@ -104,6 +104,10 @@ minecraft {
         }
 
         data {
+            // Datagen also loads EMI and Jade, so their refmaps need development mappings.
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+
             // example of overriding the workingDirectory set in configureEach above
             workingDirectory project.file('run-data')
 

@@ -1,7 +1,6 @@
 package com.sward.cybernetics.capabilities;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraftforge.common.capabilities.*;

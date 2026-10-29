@@ -1,6 +1,7 @@
 package com.sward.cybernetics.items;
 
 import com.google.common.collect.ImmutableMultimap;
+import com.sward.cybernetics.data.CyberneticSlotType;
 import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.resources.ResourceLocation;
@@ -28,7 +29,8 @@ public class CyberneticItemBuilder implements Supplier<CyberneticItem>
 
 	private final UUID uuid;
 
-	private final TagKey<Item> slotTag;
+	private final String slotGroup;
+	private final CyberneticSlotType slotType;
 
 	@Nullable
 	private TagKey<Item> requiredTag;
@@ -42,17 +44,18 @@ public class CyberneticItemBuilder implements Supplier<CyberneticItem>
 
 	private final ImmutableMultimap.Builder<Attribute, AttributeModifier> attributesMapBuilder = ImmutableMultimap.builder();
 
-	public CyberneticItemBuilder(ResourceLocation id, TagKey<Item> slotTag)
+	public CyberneticItemBuilder(ResourceLocation id, String slotGroup, CyberneticSlotType slotType)
 	{
-		this(CyberneticItem::new, id, slotTag);
+		this(CyberneticItem::new, id, slotGroup, slotType);
 	}
 
-	public CyberneticItemBuilder(ICyberneticItemFactory factory, ResourceLocation id, TagKey<Item> slotTag)
+	public CyberneticItemBuilder(ICyberneticItemFactory factory, ResourceLocation id, String slotGroup, CyberneticSlotType slotType)
 	{
 		this.factory = factory;
 		this.id = id;
 		this.uuid = UUID.nameUUIDFromBytes(id.toString().getBytes(StandardCharsets.UTF_8));
-		this.slotTag = slotTag;
+		this.slotGroup = slotGroup;
+		this.slotType = slotType;
 	}
 
 	public CyberneticItemBuilder requiredTag(TagKey<Item> requiredTag)
@@ -103,8 +106,8 @@ public class CyberneticItemBuilder implements Supplier<CyberneticItem>
 	public CyberneticItem get()
 	{
 		return factory.apply(
-			this.uuid,
-			this.slotTag,
+			this.slotGroup,
+			this.slotType,
 			this.requiredTag,
 			this.forbiddenTag,
 			this.capacityCost,

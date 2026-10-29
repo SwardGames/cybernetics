@@ -1,13 +1,12 @@
 package com.sward.cybernetics.inventory;
 
+import com.sward.cybernetics.data.CyberneticSlotType;
 import com.sward.cybernetics.items.CyberneticItem;
 import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -17,7 +16,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 public class CyberneticSlot extends Slot
 {
-	public TagKey<Item> groupId;
+	public String groupId;
 	public int groupIndex;
 
 	public CyberneticSlot(
@@ -25,7 +24,7 @@ public class CyberneticSlot extends Slot
 		int pSlot,
 		int pX,
 		int pY,
-		TagKey<Item> groupId,
+		String groupId,
 		int groupIndex
 	)
 	{
@@ -43,7 +42,12 @@ public class CyberneticSlot extends Slot
 			return false;
 		}
 
-		if (item.slotTag != this.groupId)
+		if (!item.slotGroup.equals(this.groupId))
+		{
+			return false;
+		}
+
+		if (item.slotType != CyberneticSlotType.ANY && ((item.slotType == CyberneticSlotType.PRIMARY) != (this.groupIndex == 0)))
 		{
 			return false;
 		}

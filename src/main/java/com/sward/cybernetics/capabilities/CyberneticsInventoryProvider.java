@@ -7,7 +7,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +22,7 @@ public class CyberneticsInventoryProvider implements ICapabilitySerializable<Com
 
 	public CyberneticsInventoryProvider(Player player)
 	{
-		instanceLazyOptional = LazyOptional.of(() -> new CyberneticsInventory(player));
+		this.instanceLazyOptional = LazyOptional.of(() -> new CyberneticsInventory(player));
 	}
 
 	@Override
@@ -40,12 +39,12 @@ public class CyberneticsInventoryProvider implements ICapabilitySerializable<Com
 	@Override
 	public CompoundTag serializeNBT()
 	{
-		return instanceLazyOptional.resolve().orElseThrow().serializeNBT();
+		return this.instanceLazyOptional.resolve().orElseThrow().serializeNBT();
 	}
 
 	@Override
 	public void deserializeNBT(CompoundTag nbt)
 	{
-		instanceLazyOptional.resolve().orElseThrow().deserializeNBT(nbt);
+		this.instanceLazyOptional.resolve().orElseThrow().deserializeNBT(nbt);
 	}
 }
