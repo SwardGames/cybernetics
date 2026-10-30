@@ -19,6 +19,7 @@ public interface ICyberneticItemFactory
 		@Nullable TagKey<Item> forbiddenTag,
 		int capacityCost,
 		ImmutableMultimap<Attribute, AttributeModifier> attributes,
+		ImmutableMultimap<String, AttributeModifier> curiosSlots,
 		Item.Properties properties
 	);
 }

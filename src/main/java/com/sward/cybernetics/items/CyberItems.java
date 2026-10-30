@@ -14,6 +14,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import static com.sward.cybernetics.Cybernetics.ID;
 import static com.sward.cybernetics.Cybernetics.id;
+import static com.sward.cybernetics.attributes.CyberAttributes.MOTION_SCANNER_RANGE;
 import static com.sward.cybernetics.data.CyberneticSlotType.*;
 import static com.sward.cybernetics.items.CyberneticTypeTags.*;
 import static com.sward.cybernetics.data.SlotGroups.*;
@@ -42,6 +43,13 @@ public final class CyberItems
 	public static final RegistryObject<CyberneticItem> TARGET_SCANNER = cybernetic("target_scanner", EYES, SECONDARY)
 		.capacityCost(9)
 		.requiredTag(EYE)
+		.attribute("Scanner range modifier", MOTION_SCANNER_RANGE, 24D)
+		.register(REGISTER);
+
+	// Arms
+	public static final RegistryObject<CyberneticItem> EXTRA_FINGER = cybernetic("extra_finger", ARMS, SECONDARY)
+		.capacityCost(11)
+		.curiosSlot("Ring slot", "ring", 1)
 		.register(REGISTER);
 
 	// Augments

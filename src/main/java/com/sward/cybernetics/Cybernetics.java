@@ -14,12 +14,17 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
+
+import java.util.Optional;
+
+import static com.sward.cybernetics.capabilities.ICyberneticsInventory.CAP;
 
 @Mod(Cybernetics.ID)
 public final class Cybernetics
@@ -41,6 +46,8 @@ public final class Cybernetics
 
 		modEventBus.addListener(Cybernetics::attributeModification);
 
+		MinecraftForge.EVENT_BUS.addListener(Cybernetics::tickPlayer);
+
 		MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, Cybernetics::attachEntityCapabilities);
 	}
 
@@ -52,6 +59,19 @@ public final class Cybernetics
 	private static void attributeModification(EntityAttributeModificationEvent e)
 	{
 		e.add(EntityType.PLAYER, CyberAttributes.CAPACITY.get());
+		e.add(EntityType.PLAYER, CyberAttributes.MOTION_SCANNER_RANGE.get());
+	}
+
+	private static void tickPlayer(TickEvent.PlayerTickEvent player)
+	{
+		Optional<ICyberneticsInventory> cap = player.player.getCapability(CAP).resolve();
+
+		if (cap.isEmpty())
+		{
+			return;
+		}
+
+		cap.get().tick();
 	}
 
 	private static void attachEntityCapabilities(AttachCapabilitiesEvent<Entity> e)

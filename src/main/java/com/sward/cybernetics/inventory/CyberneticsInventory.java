@@ -173,32 +173,12 @@ public class CyberneticsInventory implements ICyberneticsInventory
 					{
 						if (prevStack.getItem() instanceof CyberneticItem prevItem)
 						{
-							for (Map.Entry<Attribute, AttributeModifier> entry : prevItem.attributes.entries())
-							{
-								AttributeInstance attribute = this.player.getAttribute(entry.getKey());
-
-								if (attribute == null)
-								{
-									continue;
-								}
-
-								attribute.removeModifier(entry.getValue().getId());
-							}
+							prevItem.onUnequipped(this.player);
 						}
 
 						if (stack.getItem() instanceof CyberneticItem newItem)
 						{
-							for (Map.Entry<Attribute, AttributeModifier> entry : newItem.attributes.entries())
-							{
-								AttributeInstance attribute = this.player.getAttribute(entry.getKey());
-
-								if (attribute == null)
-								{
-									continue;
-								}
-
-								attribute.addTransientModifier(entry.getValue());
-							}
+							newItem.onEquipped(this.player);
 						}
 
 						this.previousStacks.set(i, stack.copy());
@@ -229,9 +209,9 @@ public class CyberneticsInventory implements ICyberneticsInventory
 	{
 		for (List<ItemStack> items : this.compartments)
 		{
-			for (ItemStack itemstack : items)
+			for (ItemStack stack : items)
 			{
-				if (!itemstack.isEmpty() && ItemStack.isSameItemSameTags(itemstack, pStack))
+				if (!stack.isEmpty() && ItemStack.isSameItemSameTags(stack, pStack))
 				{
 					return true;
 				}
@@ -245,9 +225,9 @@ public class CyberneticsInventory implements ICyberneticsInventory
 	{
 		for (List<ItemStack> items : this.compartments)
 		{
-			for (ItemStack itemstack : items)
+			for (ItemStack stack : items)
 			{
-				if (!itemstack.isEmpty() && itemstack.is(pTag))
+				if (!stack.isEmpty() && stack.is(pTag))
 				{
 					return true;
 				}
@@ -255,6 +235,21 @@ public class CyberneticsInventory implements ICyberneticsInventory
 		}
 
 		return false;
+	}
+
+	@Override
+	public void tick()
+	{
+		for (List<ItemStack> items : this.compartments)
+		{
+			for (ItemStack stack : items)
+			{
+				if (stack.getItem() instanceof CyberneticItem cyberneticItem)
+				{
+					cyberneticItem.onEquippedTick(this.player.level(), this.player);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -301,14 +296,6 @@ public class CyberneticsInventory implements ICyberneticsInventory
 			}
 		}
 
-		int i = 0;
-
-		for (NonNullList<ItemStack> items : this.compartments)
-		{
-			for (ItemStack stack : items)
-			{
-				this.previousStacks.set(i++, stack.copy());
-			}
-		}
+		this.setChanged();
 	}
 }

@@ -1,6 +1,7 @@
 package com.sward.cybernetics.items;
 
 import com.google.common.collect.ImmutableMultimap;
+import com.sward.cybernetics.PresentAddons;
 import com.sward.cybernetics.data.CyberneticSlotType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.FieldsAreNonnullByDefault;
@@ -10,13 +11,17 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import top.theillusivec4.curios.api.CuriosApi;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -43,6 +48,7 @@ public class CyberneticItem extends Item
 	public final int capacityCost;
 
 	public final ImmutableMultimap<Attribute, AttributeModifier> attributes;
+	public final ImmutableMultimap<String, AttributeModifier> curiosSlots;
 
 	public CyberneticItem(
 		String slotGroup,
@@ -51,6 +57,7 @@ public class CyberneticItem extends Item
 		@Nullable TagKey<Item> forbiddenTag,
 		int capacityCost,
 		ImmutableMultimap<Attribute, AttributeModifier> attributes,
+		ImmutableMultimap<String, AttributeModifier> curiosSlots,
 		Properties properties
 	)
 	{
@@ -63,7 +70,14 @@ public class CyberneticItem extends Item
 		this.forbiddenTag = forbiddenTag;
 
 		this.capacityCost = capacityCost;
+
 		this.attributes = attributes;
+		this.curiosSlots = curiosSlots;
+	}
+
+	public void onEquippedTick(Level level, Entity entity)
+	{
+
 	}
 
 	public boolean validate(ItemStack stack, Container inv)
@@ -101,8 +115,14 @@ public class CyberneticItem extends Item
 	)
 	{
 		components.add(
+			Component.translatable(getDescriptionId() + ".desc", this.capacityCost).withStyle(ChatFormatting.GRAY)
+		);
+
+		components.add(CommonComponents.EMPTY);
+
+		components.add(
 			Component.translatable(
-				"tooltip.cybernetics.slot",
+				"tooltip.cybernetics.slot." + this.slotType.ordinal(),
 				Component.translatable("cybernetics_group." + this.slotGroup)
 			).withStyle(ChatFormatting.GOLD)
 		);
@@ -146,54 +166,154 @@ public class CyberneticItem extends Item
 			);
 		}
 
-		if (!this.attributes.isEmpty())
+		appendAttributesHoverText(components);
+
+		if (PresentAddons.CURIOS)
 		{
-			components.add(CommonComponents.EMPTY);
-			components.add(Component.translatable("tooltip.cybernetics.modifiers").withStyle(ChatFormatting.GRAY));
+			appendCuriosHoverText(components);
+		}
+	}
 
-			for (Map.Entry<Attribute, AttributeModifier> entry : this.attributes.entries())
+	public void onEquipped(LivingEntity entity)
+	{
+		for (Map.Entry<Attribute, AttributeModifier> entry : this.attributes.entries())
+		{
+			AttributeInstance attribute = entity.getAttribute(entry.getKey());
+
+			if (attribute == null)
 			{
-				AttributeModifier attributemodifier = entry.getValue();
-				double baseAmount = attributemodifier.getAmount();
+				continue;
+			}
 
-				double displayedAmount;
+			attribute.addTransientModifier(entry.getValue());
+		}
 
-				if (attributemodifier.getOperation() != AttributeModifier.Operation.MULTIPLY_BASE && attributemodifier.getOperation() != AttributeModifier.Operation.MULTIPLY_TOTAL)
+		if (PresentAddons.CURIOS)
+		{
+			CuriosApi.getCuriosInventory(entity).ifPresent(inv -> inv.addTransientSlotModifiers(this.curiosSlots));
+		}
+	}
+
+	public void onUnequipped(LivingEntity entity)
+	{
+		for (Map.Entry<Attribute, AttributeModifier> entry : this.attributes.entries())
+		{
+			AttributeInstance attribute = entity.getAttribute(entry.getKey());
+
+			if (attribute == null)
+			{
+				continue;
+			}
+
+			attribute.removeModifier(entry.getValue().getId());
+		}
+
+		if (PresentAddons.CURIOS)
+		{
+			CuriosApi.getCuriosInventory(entity).ifPresent(inv -> inv.removeSlotModifiers(this.curiosSlots));
+		}
+	}
+
+	private void appendAttributesHoverText(List<Component> components)
+	{
+		if (this.attributes.isEmpty())
+		{
+			return;
+		}
+
+		components.add(CommonComponents.EMPTY);
+		components.add(Component.translatable("tooltip.cybernetics.modifiers").withStyle(ChatFormatting.GRAY));
+
+		for (Map.Entry<Attribute, AttributeModifier> entry : this.attributes.entries())
+		{
+			AttributeModifier attributemodifier = entry.getValue();
+			double baseAmount = attributemodifier.getAmount();
+
+			double displayedAmount;
+
+			if (attributemodifier.getOperation() != AttributeModifier.Operation.MULTIPLY_BASE && attributemodifier.getOperation() != AttributeModifier.Operation.MULTIPLY_TOTAL)
+			{
+				if (entry.getKey().equals(Attributes.KNOCKBACK_RESISTANCE))
 				{
-					if (entry.getKey().equals(Attributes.KNOCKBACK_RESISTANCE))
-					{
-						displayedAmount = baseAmount * 10D;
-					}
-					else
-					{
-						displayedAmount = baseAmount;
-					}
+					displayedAmount = baseAmount * 10D;
 				}
 				else
 				{
-					displayedAmount = baseAmount * 100D;
+					displayedAmount = baseAmount;
 				}
+			}
+			else
+			{
+				displayedAmount = baseAmount * 100D;
+			}
 
-				if (baseAmount > 0D)
-				{
-					components.add(Component.translatable(
-						"attribute.modifier.plus." + attributemodifier.getOperation()
-							.toValue(),
-						ATTRIBUTE_MODIFIER_FORMAT.format(displayedAmount),
-						Component.translatable(entry.getKey().getDescriptionId())
-					).withStyle(ChatFormatting.BLUE));
-				}
-				else if (baseAmount < 0D)
-				{
-					displayedAmount *= -1;
+			if (baseAmount > 0D)
+			{
+				components.add(Component.translatable(
+					"attribute.modifier.plus." + attributemodifier.getOperation().toValue(),
+					ATTRIBUTE_MODIFIER_FORMAT.format(displayedAmount),
+					Component.translatable(entry.getKey().getDescriptionId())
+				).withStyle(ChatFormatting.BLUE));
+			}
+			else if (baseAmount < 0D)
+			{
+				displayedAmount *= -1;
 
-					components.add(Component.translatable(
-						"attribute.modifier.take." + attributemodifier.getOperation()
-							.toValue(),
-						ATTRIBUTE_MODIFIER_FORMAT.format(displayedAmount),
-						Component.translatable(entry.getKey().getDescriptionId())
-					).withStyle(ChatFormatting.RED));
-				}
+				components.add(Component.translatable(
+					"attribute.modifier.take." + attributemodifier.getOperation().toValue(),
+					ATTRIBUTE_MODIFIER_FORMAT.format(displayedAmount),
+					Component.translatable(entry.getKey().getDescriptionId())
+				).withStyle(ChatFormatting.RED));
+			}
+		}
+	}
+
+	private void appendCuriosHoverText(List<Component> components)
+	{
+		if (this.curiosSlots.isEmpty())
+		{
+			return;
+		}
+
+		if (this.attributes.isEmpty())
+		{
+			components.add(CommonComponents.EMPTY);
+			components.add(Component.translatable("tooltip.cybernetics.modifiers").withStyle(ChatFormatting.GRAY));
+		}
+
+		for (Map.Entry<String, AttributeModifier> entry : this.curiosSlots.entries())
+		{
+			AttributeModifier attributemodifier = entry.getValue();
+			double baseAmount = attributemodifier.getAmount();
+
+			double displayedAmount;
+
+			if (attributemodifier.getOperation() != AttributeModifier.Operation.MULTIPLY_BASE && attributemodifier.getOperation() != AttributeModifier.Operation.MULTIPLY_TOTAL)
+			{
+				displayedAmount = baseAmount;
+			}
+			else
+			{
+				displayedAmount = baseAmount * 100D;
+			}
+
+			if (baseAmount > 0D)
+			{
+				components.add(Component.translatable(
+					"curios.modifiers.slots.plus." + attributemodifier.getOperation().toValue(),
+					ATTRIBUTE_MODIFIER_FORMAT.format(displayedAmount),
+					Component.translatable("curios.identifier." + entry.getKey())
+				).withStyle(ChatFormatting.BLUE));
+			}
+			else if (baseAmount < 0D)
+			{
+				displayedAmount *= -1;
+
+				components.add(Component.translatable(
+					"curios.modifiers.slots.take." + attributemodifier.getOperation().toValue(),
+					ATTRIBUTE_MODIFIER_FORMAT.format(displayedAmount),
+					Component.translatable("curios.identifier." + entry.getKey())
+				).withStyle(ChatFormatting.RED));
 			}
 		}
 	}

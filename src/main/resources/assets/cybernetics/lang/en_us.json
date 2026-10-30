@@ -25,14 +25,33 @@
 	"block.cybernetics.red_operating_table": "Red Operating Table",
 	"block.cybernetics.black_operating_table": "Black Operating Table",
 
+	"item.cybernetics.neural_coprocessor": "Neural Co-Processor",
+	"item.cybernetics.neural_coprocessor.desc": "Offloads some of your cybernetic load.",
 	"item.cybernetics.cyber_eyes": "Cyber Eyes",
+	"item.cybernetics.cyber_eyes.desc": "Provides a heads-up display. Required for most vision-based implants.",
+	"item.cybernetics.target_scanner": "Target Scanner",
+	"item.cybernetics.target_scanner.desc": "Tracks targets by motion and displays their outline on your HUD.",
+	"item.cybernetics.extra_finger": "Extra Finger",
+	"item.cybernetics.extra_finger.desc": "An extra digit to assist you in dexterous activities. Also lets you equip an extra ring.",
+	"item.cybernetics.subdermal_armor": "Subdermal Armor",
+	"item.cybernetics.subdermal_armor.desc": "An armored weave placed beneath the epidermis to provide additional protection.",
+	"item.cybernetics.titanium_bones": "Titanium Bones",
+	"item.cybernetics.titanium_bones.desc": "This titanium-reinforced skeleton will make you more durable.",
+	"item.cybernetics.hollow_bones": "Hollow Bones",
+	"item.cybernetics.hollow_bones.desc": "This lightweight, bird-inspired skeleton makes you faster, but also more fragile.",
 
 	"tag.cybernetics.cybernetic_type.eye": "Any Cyber Eyes",
 	"tag.cybernetics.cybernetic_type.bone": "Any Bone Augments",
 
-	"tooltip.cybernetics.slot": "Equippable in: %s",
+	"attribute.cybernetics.capacity": "Cybernetic Capacity",
+	"attribute.cybernetics.loader": "Cybernetic Load",
+	"attribute.cybernetics.motion_scanner_range": "Motion Scanner Range",
+
+	"tooltip.cybernetics.slot.0": "Equippable in: %s",
+	"tooltip.cybernetics.slot.1": "Equippable in: %s - Primary",
+	"tooltip.cybernetics.slot.2": "Equippable in: %s - Secondary",
 	"tooltip.cybernetics.required": "Requires %s",
 	"tooltip.cybernetics.forbidden": "Incompatible with %s",
 	"tooltip.cybernetics.capacity_cost": "Cybernetic Load: %s",
-	"tooltip.cybernetics.modifiers": "When Equipped:"
+	"tooltip.cybernetics.modifiers": "When equipped:"
 }

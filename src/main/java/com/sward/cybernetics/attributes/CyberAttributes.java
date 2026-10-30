@@ -17,6 +17,11 @@ public final class CyberAttributes
 
 	public static final RegistryObject<Attribute> CAPACITY = REGISTER.register(
 		"cybernetic_capacity",
-		() -> new RangedAttribute("attribute.cybernetics.cybernetic_capacity", 100D, 0D, 1024.0D).setSyncable(true)
+		() -> new RangedAttribute("attribute.cybernetics.cybernetic_capacity", 100D, 0D, 1024D).setSyncable(true)
+	);
+
+	public static final RegistryObject<Attribute> MOTION_SCANNER_RANGE = REGISTER.register(
+		"motion_scanner_range",
+		() -> new RangedAttribute("attribute.cybernetics.motion_scanner_range", 0D, 0D, 256D).setSyncable(true)
 	);
 }

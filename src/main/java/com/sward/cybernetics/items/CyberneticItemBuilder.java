@@ -11,10 +11,13 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -42,7 +45,9 @@ public class CyberneticItemBuilder implements Supplier<CyberneticItem>
 
 	private Item.Properties properties = new Item.Properties().stacksTo(1);
 
-	private final ImmutableMultimap.Builder<Attribute, AttributeModifier> attributesMapBuilder = ImmutableMultimap.builder();
+	private final List<Pair<Supplier<Attribute>, AttributeModifier>> attributes = new ArrayList<>();
+
+	private final ImmutableMultimap.Builder<String, AttributeModifier> curiosSlots = ImmutableMultimap.builder();
 
 	public CyberneticItemBuilder(ResourceLocation id, String slotGroup, CyberneticSlotType slotType)
 	{
@@ -81,16 +86,53 @@ public class CyberneticItemBuilder implements Supplier<CyberneticItem>
 
 	public CyberneticItemBuilder attribute(String name, Attribute attribute, double amount)
 	{
-		return attribute(name, attribute, amount, AttributeModifier.Operation.ADDITION);
+		return attribute(name, () -> attribute, amount, AttributeModifier.Operation.ADDITION);
 	}
 
 	public CyberneticItemBuilder attribute(
-		String name, Attribute attribute,
+		String name,
+		Attribute attribute,
 		double amount,
 		AttributeModifier.Operation operation
 	)
 	{
-		this.attributesMapBuilder.put(attribute, new AttributeModifier(this.uuid, name, amount, operation));
+		return attribute(name, () -> attribute, amount, operation);
+	}
+
+	public CyberneticItemBuilder attribute(String name, Supplier<Attribute> attribute, double amount)
+	{
+		return attribute(name, attribute, amount, AttributeModifier.Operation.ADDITION);
+	}
+
+	public CyberneticItemBuilder attribute(
+		String name,
+		Supplier<Attribute> attribute,
+		double amount,
+		AttributeModifier.Operation operation
+	)
+	{
+		this.attributes.add(Pair.of(attribute, new AttributeModifier(this.uuid, name, amount, operation)));
+
+		return this;
+	}
+
+	public CyberneticItemBuilder curiosSlot(
+		String name,
+		String curiosSlot,
+		int amount
+	)
+	{
+		return curiosSlot(name, curiosSlot, amount, AttributeModifier.Operation.ADDITION);
+	}
+
+	public CyberneticItemBuilder curiosSlot(
+		String name,
+		String curiosSlot,
+		double amount,
+		AttributeModifier.Operation operation
+	)
+	{
+		this.curiosSlots.put(curiosSlot, new AttributeModifier(this.uuid, name, amount, operation));
 
 		return this;
 	}
@@ -105,13 +147,21 @@ public class CyberneticItemBuilder implements Supplier<CyberneticItem>
 	@Override
 	public CyberneticItem get()
 	{
+		ImmutableMultimap.Builder<Attribute, AttributeModifier> attributesMapBuilder = ImmutableMultimap.builder();
+
+		for (Pair<Supplier<Attribute>, AttributeModifier> attribute : this.attributes)
+		{
+			attributesMapBuilder.put(attribute.getKey().get(), attribute.getValue());
+		}
+
 		return factory.apply(
 			this.slotGroup,
 			this.slotType,
 			this.requiredTag,
 			this.forbiddenTag,
 			this.capacityCost,
-			this.attributesMapBuilder.build(),
+			attributesMapBuilder.build(),
+			this.curiosSlots.build(),
 			this.properties
 		);
 	}
