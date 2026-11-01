@@ -38,16 +38,9 @@ public class OperatingTableMenu extends AbstractContainerMenu
 		super(CyberMenuTypes.OPERATING_TABLE.get(), containerId);
 
 		int z = 0;
-		int l = 15 + 11;
-		int r = 15 + 11;
-
-		boolean onRight = false;
 
 		for (CyberSlotGroup group : CyberConfig.SLOTS.groups)
 		{
-			int x0 = onRight ? 116 : 8;
-			int y0 = onRight ? r : l;
-
 			int n = 0;
 
 			for (CyberSlotType type : group.slotTypes)
@@ -58,8 +51,8 @@ public class OperatingTableMenu extends AbstractContainerMenu
 						new CyberneticSlot(
 							cyberInv,
 							z,
-							x0 + (n % 3) * 18,
-							y0 + (n / 3) * 18,
+							group.x + (n % 3) * 18,
+							group.y + 10 + (n / 3) * 18,
 							playerInv.player,
 							type.id.get()
 						)
@@ -69,17 +62,6 @@ public class OperatingTableMenu extends AbstractContainerMenu
 					++z;
 				}
 			}
-
-			if (onRight)
-			{
-				r += ((n + 2) / 3) * 18 + 11;
-			}
-			else
-			{
-				l += ((n + 2) / 3) * 18 + 11;
-			}
-
-			onRight = !onRight;
 		}
 
 		for (int j = 0; j < 3; ++j)

@@ -122,9 +122,6 @@ mixin {
     config 'cybernetics.mixins.json'
 }
 
-// Bundle MixinExtras in the distributable -all JAR.
-jarJar.enable()
-
 repositories {
     maven {
         name = 'Fzzy Maven'
@@ -150,11 +147,6 @@ repositories {
         name = 'Modrinth'
         url = 'https://api.modrinth.com/maven'
         content { includeGroup 'maven.modrinth' }
-    }
-    maven {
-        name = 'Curse Maven'
-        url = 'https://cursemaven.com/'
-        content { includeGroup 'curse.maven' }
     }
     // Put repositories for dependencies here
     // ForgeGradle automatically adds the Forge maven and Maven Central for you
@@ -184,12 +176,6 @@ dependencies {
     // Forge supplies Mixin at runtime; the processor generates the refmap for production.
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-    // MixinExtras supplies @Local and additional injectors in development and production.
-    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixinextras_version}"))
-    implementation(jarJar("io.github.llamalad7:mixinextras-forge:${mixinextras_version}")) {
-        jarJar.ranged(it, "[${mixinextras_version},)")
-    }
-
     // Lombok generates code at compile time and is not required at runtime.
     compileOnly "org.projectlombok:lombok:${lombok_version}"
     annotationProcessor "org.projectlombok:lombok:${lombok_version}"
@@ -203,7 +189,6 @@ dependencies {
     runtimeOnly fg.deobf("maven.modrinth:jade:${jade_version}")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
-    runtimeOnly fg.deobf("curse.maven:configured-457570:${configured_file_id}")
 
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
@@ -268,7 +253,7 @@ tasks.named('jar', Jar).configure {
 publishing {
     publications {
         register('mavenJava', MavenPublication) {
-            artifact tasks.named('jarJar')
+            artifact tasks.named('jar')
         }
     }
     repositories {

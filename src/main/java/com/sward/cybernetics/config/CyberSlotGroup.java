@@ -18,14 +18,19 @@ public class CyberSlotGroup implements Walkable
 
 	public ValidatedList<CyberSlotType> slotTypes;
 
+	public int x;
+	public int y;
+
 	public CyberSlotGroup()
 	{
-		this("new_group");
+		this("new_group", 0, 0);
 	}
 
-	public CyberSlotGroup(String defaultId, CyberSlotType... slotTypes)
+	public CyberSlotGroup(String defaultId, int x, int y, CyberSlotType... slotTypes)
 	{
 		this.id = new ValidatedString(defaultId, "[a-z0-9_]+");
+		this.x = x;
+		this.y = y;
 		this.slotTypes = new ValidatedAny<>(new CyberSlotType()).toList(slotTypes);
 	}
 }

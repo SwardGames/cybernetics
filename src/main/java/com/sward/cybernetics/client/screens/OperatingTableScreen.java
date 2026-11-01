@@ -53,11 +53,6 @@ public class OperatingTableScreen extends AbstractContainerScreen<OperatingTable
 	{
 		super.init();
 
-		int l = 16;
-		int r = 16;
-
-		boolean onRight = false;
-
 		for (CyberSlotGroup group : CyberConfig.SLOTS.groups)
 		{
 			FormattedCharSequence text = Component
@@ -70,30 +65,12 @@ public class OperatingTableScreen extends AbstractContainerScreen<OperatingTable
 				Label.at(
 					text,
 					this.font,
-					onRight ? 116 - Math.max(width - 18 * 3, 0) : 8,
-					onRight ? r : l,
+					group.x - Math.max(group.x + width - 170, 0),
+					group.y,
 					0x00FF00,
 					false
 				)
 			);
-
-			int n = 0;
-
-			for (CyberSlotType type : group.slotTypes)
-			{
-				n += type.count.get();
-			}
-
-			if (onRight)
-			{
-				r += ((n + 2) / 3) * 18 + 11;
-			}
-			else
-			{
-				l += ((n + 2) / 3) * 18 + 11;
-			}
-
-			onRight = !onRight;
 		}
 	}
 
@@ -181,6 +158,9 @@ public class OperatingTableScreen extends AbstractContainerScreen<OperatingTable
 	@Override
 	protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY)
 	{
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(0, 0, 270);
+
 		guiGraphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 0x00FF00, false);
 		guiGraphics.drawString(
 			this.font,
@@ -208,6 +188,8 @@ public class OperatingTableScreen extends AbstractContainerScreen<OperatingTable
 		{
 			label.draw(guiGraphics);
 		}
+
+		guiGraphics.pose().popPose();
 
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
