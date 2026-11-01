@@ -1,11 +1,9 @@
 package com.sward.cybernetics.items;
 
 import com.sward.cybernetics.blocks.CyberBlocks;
-import com.sward.cybernetics.data.CyberneticSlotType;
 import com.sward.cybernetics.registries.DyedRegistryObjects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.BedItem;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
@@ -13,12 +11,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import static com.sward.cybernetics.Cybernetics.ID;
-import static com.sward.cybernetics.Cybernetics.id;
-import static com.sward.cybernetics.attributes.CyberAttributes.MOTION_SCANNER_RANGE;
-import static com.sward.cybernetics.data.CyberneticSlotType.*;
-import static com.sward.cybernetics.items.CyberneticTypeTags.*;
-import static com.sward.cybernetics.data.SlotGroups.*;
-import static net.minecraft.world.entity.ai.attributes.Attributes.*;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CyberItems
@@ -31,56 +23,25 @@ public final class CyberItems
 	);
 
 	// Brain
-	public static final RegistryObject<CyberneticItem> NEUTRAL_COPROCESSOR = cybernetic("neural_coprocessor", BRAIN, PRIMARY)
-		.capacityCost(-15)
-		.register(REGISTER);
+	public static final RegistryObject<Item> NEUTRAL_COPROCESSOR = cybernetic("neural_coprocessor");
 
 	// Eyes
-	public static final RegistryObject<CyberneticItem> CYBER_EYES = cybernetic("cyber_eyes", EYES, PRIMARY)
-		.capacityCost(4)
-		.register(REGISTER);
+	public static final RegistryObject<Item> CYBER_EYES = cybernetic("cyber_eyes");
 
-	public static final RegistryObject<CyberneticItem> TARGET_SCANNER = cybernetic("target_scanner", EYES, SECONDARY)
-		.capacityCost(9)
-		.requiredTag(EYE)
-		.attribute("Scanner range modifier", MOTION_SCANNER_RANGE, 24D)
-		.register(REGISTER);
+	public static final RegistryObject<Item> TARGET_SCANNER = cybernetic("target_scanner");
 
 	// Arms
-	public static final RegistryObject<CyberneticItem> EXTRA_FINGER = cybernetic("extra_finger", ARMS, SECONDARY)
-		.capacityCost(11)
-		.curiosSlot("Ring slot", "ring", 1)
-		.register(REGISTER);
+	public static final RegistryObject<Item> EXTRA_FINGER = cybernetic("extra_finger");
 
 	// Augments
-	public static final RegistryObject<CyberneticItem> SUBDERMAL_ARMOR = augment("subdermal_armor")
-		.capacityCost(10)
-		.attribute("Armor modifier", ARMOR, 4)
-		.register(REGISTER);
+	public static final RegistryObject<Item> SUBDERMAL_ARMOR = cybernetic("subdermal_armor");
 
 	// Augments / Bones
-	public static final RegistryObject<CyberneticItem> HOLLOW_BONES = augment("hollow_bones")
-		.capacityCost(14)
-		.forbiddenTag(BONE)
-		.attribute("Movement speed modifier", MOVEMENT_SPEED, 0.15D, AttributeModifier.Operation.MULTIPLY_TOTAL)
-		.attribute("Armor modifier", ARMOR, -0.1D, AttributeModifier.Operation.MULTIPLY_TOTAL)
-		.attribute("Knockback modifier", KNOCKBACK_RESISTANCE, -0.1, AttributeModifier.Operation.ADDITION)
-		.register(REGISTER);
+	public static final RegistryObject<Item> HOLLOW_BONES = cybernetic("hollow_bones");
+	public static final RegistryObject<Item> TITANIUM_BONES = cybernetic("titanium_bones");
 
-	public static final RegistryObject<CyberneticItem> TITANIUM_BONES = augment("titanium_bones")
-		.capacityCost(18)
-		.forbiddenTag(BONE)
-		.attribute("Max health modifier", MAX_HEALTH, 6, AttributeModifier.Operation.ADDITION)
-		.attribute("Knockback modifier", KNOCKBACK_RESISTANCE, 0.1, AttributeModifier.Operation.ADDITION)
-		.register(REGISTER);
-
-	private static CyberneticItemBuilder cybernetic(String name, String slotGroup, CyberneticSlotType slotType)
+	private static RegistryObject<Item> cybernetic(String name)
 	{
-		return new CyberneticItemBuilder(id(name), slotGroup, slotType);
-	}
-
-	private static CyberneticItemBuilder augment(String name)
-	{
-		return new CyberneticItemBuilder(id(name), AUGMENTS, ANY);
+		return REGISTER.register(name, () -> new Item(new Item.Properties().stacksTo(1)));
 	}
 }

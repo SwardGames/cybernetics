@@ -1,6 +1,16 @@
 package com.sward.cybernetics;
 
 import com.mojang.logging.LogUtils;
+import com.mojang.serialization.Codec;
+import com.sward.cybernetics.compat.curios.components.CuriosSlotsComponent;
+import com.sward.cybernetics.config.CyberConfig;
+import com.sward.cybernetics.cybernetics.CyberneticDefinition;
+import com.sward.cybernetics.cybernetics.ICyberneticComponent;
+import com.sward.cybernetics.cybernetics.components.AttributeModifiersComponent;
+import com.sward.cybernetics.cybernetics.components.DescriptionComponent;
+import com.sward.cybernetics.cybernetics.components.IncompatibleImplantTagComponent;
+import com.sward.cybernetics.cybernetics.components.RequiredImplantTagComponent;
+import com.sward.cybernetics.registries.CyberRegistries;
 import com.sward.cybernetics.attributes.CyberAttributes;
 import com.sward.cybernetics.blocks.CyberBlocks;
 import com.sward.cybernetics.capabilities.CyberneticsInventoryProvider;
@@ -8,6 +18,7 @@ import com.sward.cybernetics.capabilities.ICyberneticsInventory;
 import com.sward.cybernetics.items.CyberCreativeTabs;
 import com.sward.cybernetics.items.CyberItems;
 import com.sward.cybernetics.inventory.CyberMenuTypes;
+import com.sward.cybernetics.registries.CyberRegistryKeys;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -18,8 +29,11 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DataPackRegistryEvent;
+import net.minecraftforge.registries.NewRegistryEvent;
+import net.minecraftforge.registries.RegisterEvent;
+import net.minecraftforge.registries.RegistryBuilder;
 import org.slf4j.Logger;
 
 import java.util.Optional;
@@ -36,18 +50,20 @@ public final class Cybernetics
 	{
 		IEventBus modEventBus = ctx.getModEventBus();
 
+		CyberConfig.init();
+
 		CyberAttributes.REGISTER.register(modEventBus);
 		CyberBlocks.REGISTER.register(modEventBus);
 		CyberItems.REGISTER.register(modEventBus);
 		CyberCreativeTabs.REGISTER.register(modEventBus);
 		CyberMenuTypes.REGISTER.register(modEventBus);
 
-		ctx.registerConfig(ModConfig.Type.SERVER, CyberConfig.Server.SPEC);
-
 		modEventBus.addListener(Cybernetics::attributeModification);
+		modEventBus.addListener(Cybernetics::newRegistries);
+		modEventBus.addListener(Cybernetics::newDataPackRegistries);
+		modEventBus.addListener(Cybernetics::registerEvent);
 
 		MinecraftForge.EVENT_BUS.addListener(Cybernetics::tickPlayer);
-
 		MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, Cybernetics::attachEntityCapabilities);
 	}
 
@@ -59,7 +75,57 @@ public final class Cybernetics
 	private static void attributeModification(EntityAttributeModificationEvent e)
 	{
 		e.add(EntityType.PLAYER, CyberAttributes.CAPACITY.get());
+		e.add(EntityType.PLAYER, CyberAttributes.LOAD.get());
 		e.add(EntityType.PLAYER, CyberAttributes.MOTION_SCANNER_RANGE.get());
+	}
+
+	private static void newRegistries(NewRegistryEvent e)
+	{
+		e.<Codec<? extends ICyberneticComponent>>create(
+			RegistryBuilder.of(CyberRegistryKeys.CYBERNETIC_COMPONENT_CODECS.location()),
+			newRegistry -> CyberRegistries.CYBERNETIC_COMPONENT_CODECS = newRegistry
+		);
+	}
+
+	private static void newDataPackRegistries(DataPackRegistryEvent.NewRegistry e)
+	{
+		e.dataPackRegistry(CyberRegistryKeys.CYBERNETIC_DEFINITIONS, CyberneticDefinition.CODEC);
+	}
+
+	private static void registerEvent(RegisterEvent e)
+	{
+		e.register(
+			CyberRegistryKeys.CYBERNETIC_COMPONENT_CODECS,
+			id("attribute_modifiers"),
+			() -> AttributeModifiersComponent.CODEC
+		);
+
+		e.register(
+			CyberRegistryKeys.CYBERNETIC_COMPONENT_CODECS,
+			id("description"),
+			() -> DescriptionComponent.CODEC
+		);
+
+		e.register(
+			CyberRegistryKeys.CYBERNETIC_COMPONENT_CODECS,
+			id("incompatible_implant_tag"),
+			() -> IncompatibleImplantTagComponent.CODEC
+		);
+
+		e.register(
+			CyberRegistryKeys.CYBERNETIC_COMPONENT_CODECS,
+			id("required_implant_tag"),
+			() -> RequiredImplantTagComponent.CODEC
+		);
+
+		if (AddonsPresent.CURIOS)
+		{
+			e.register(
+				CyberRegistryKeys.CYBERNETIC_COMPONENT_CODECS,
+				id("curios_slots"),
+				() -> CuriosSlotsComponent.CODEC
+			);
+		}
 	}
 
 	private static void tickPlayer(TickEvent.PlayerTickEvent player)

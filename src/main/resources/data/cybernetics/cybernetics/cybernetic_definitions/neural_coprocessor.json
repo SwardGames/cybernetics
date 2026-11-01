@@ -1,0 +1,18 @@
+{
+	"slot": "brain",
+	"components": [
+		{
+			"type": "cybernetics:description",
+			"text": "item.cybernetics.neural_coprocessor.desc"
+		},
+		{
+			"type": "cybernetics:attribute_modifiers",
+			"modifiers": [
+				{
+					"attribute": "cybernetics:cybernetic_capacity",
+					"amount": 15
+				}
+			]
+		}
+	]
+}

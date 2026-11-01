@@ -1,12 +1,26 @@
 {
 	"menu.cybernetics.operating_table": "Operating Table",
 
-	"cybernetics_group.brain": "Brain",
+	"cybernetics_group.nervous_system": "Nervous System",
 	"cybernetics_group.eyes": "Eyes",
-	"cybernetics_group.spine": "Nervous System",
 	"cybernetics_group.arms": "Arms",
 	"cybernetics_group.legs": "Legs",
+	"cybernetics_group.circulatory_system": "Circulatory",
 	"cybernetics_group.augments": "Augments",
+	"cybernetics_slot_type.brain": "Brain",
+	"cybernetics_slot_type.spine": "Spine",
+	"cybernetics_slot_type.nervous_system_augments": "Nervous System",
+	"cybernetics_slot_type.eyes": "Eyes",
+	"cybernetics_slot_type.eye_augments": "Eye Augments",
+	"cybernetics_slot_type.arms": "Arms",
+	"cybernetics_slot_type.hands": "Hands",
+	"cybernetics_slot_type.arm_augments": "Arm Augments",
+	"cybernetics_slot_type.heart": "Heart",
+	"cybernetics_slot_type.circulatory_system_augments": "Circulatory System Augments",
+	"cybernetics_slot_type.legs": "Legs",
+	"cybernetics_slot_type.feet": "Feet",
+	"cybernetics_slot_type.leg_augments": "Leg Augments",
+	"cybernetics_slot_type.augments": "Augments",
 
 	"block.cybernetics.white_operating_table": "White Operating Table",
 	"block.cybernetics.orange_operating_table": "Orange Operating Table",
@@ -43,15 +57,16 @@
 	"tag.cybernetics.cybernetic_type.eye": "Any Cyber Eyes",
 	"tag.cybernetics.cybernetic_type.bone": "Any Bone Augments",
 
-	"attribute.cybernetics.capacity": "Cybernetic Capacity",
-	"attribute.cybernetics.loader": "Cybernetic Load",
+	"attribute.cybernetics.cybernetic_capacity": "Cybernetic Capacity",
+	"attribute.cybernetics.cybernetic_load": "Cybernetic Load",
 	"attribute.cybernetics.motion_scanner_range": "Motion Scanner Range",
 
+	"tooltip.cybernetics.slot": "Implantable in: %s",
 	"tooltip.cybernetics.slot.0": "Equippable in: %s",
 	"tooltip.cybernetics.slot.1": "Equippable in: %s - Primary",
 	"tooltip.cybernetics.slot.2": "Equippable in: %s - Secondary",
-	"tooltip.cybernetics.required": "Requires %s",
-	"tooltip.cybernetics.forbidden": "Incompatible with %s",
+	"tooltip.cybernetics.required_implant": "Requires: %s",
+	"tooltip.cybernetics.incompatible_implant": "Incompatible with: %s",
 	"tooltip.cybernetics.capacity_cost": "Cybernetic Load: %s",
-	"tooltip.cybernetics.modifiers": "When equipped:"
+	"tooltip.cybernetics.modifiers": "When implanted:"
 }

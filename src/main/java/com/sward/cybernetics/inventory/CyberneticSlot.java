@@ -1,7 +1,8 @@
 package com.sward.cybernetics.inventory;
 
-import com.sward.cybernetics.data.CyberneticSlotType;
-import com.sward.cybernetics.items.CyberneticItem;
+import com.sward.cybernetics.cybernetics.CyberneticDefinition;
+import com.sward.cybernetics.cybernetics.events.implanting.CanImplant;
+import com.sward.cybernetics.cybernetics.CyberneticDefinitions;
 import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.world.Container;
@@ -16,38 +17,35 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 public class CyberneticSlot extends Slot
 {
-	public String groupId;
-	public int groupIndex;
+	public final Player player;
+	public final String type;
 
 	public CyberneticSlot(
-		Container pContainer,
-		int pSlot,
-		int pX,
-		int pY,
-		String groupId,
-		int groupIndex
+		Container container,
+		int slot,
+		int x,
+		int y,
+		Player player,
+		String type
 	)
 	{
-		super(pContainer, pSlot, pX, pY);
+		super(container, slot, x, y);
 
-		this.groupId = groupId;
-		this.groupIndex = groupIndex;
+		this.player = player;
+		this.type = type;
 	}
 
 	@Override
 	public boolean mayPlace(ItemStack stack)
 	{
-		if (!(stack.getItem() instanceof CyberneticItem item))
+		CyberneticDefinition definition = CyberneticDefinitions.forItem(stack.getItem());
+
+		if (definition == null)
 		{
 			return false;
 		}
 
-		if (!item.slotGroup.equals(this.groupId))
-		{
-			return false;
-		}
-
-		if (item.slotType != CyberneticSlotType.ANY && ((item.slotType == CyberneticSlotType.PRIMARY) != (this.groupIndex == 0)))
+		if (!definition.getSlot().equals(this.type))
 		{
 			return false;
 		}
@@ -82,12 +80,14 @@ public class CyberneticSlot extends Slot
 		{
 			ItemStack stack = this.container.getItem(i);
 
-			if (!(stack.getItem() instanceof CyberneticItem item))
+			CyberneticDefinition definition = CyberneticDefinitions.forItem(stack.getItem());
+
+			if (definition == null)
 			{
 				continue;
 			}
 
-			if (!item.validate(stack, this.container))
+			if (!definition.getEvent(CanImplant.EVENT).canImplant(stack, this.player, this.container))
 			{
 				return false;
 			}

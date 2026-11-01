@@ -1,0 +1,27 @@
+{
+	"slot": "augments",
+	"components": [
+		{
+			"type": "cybernetics:description",
+			"text": "item.cybernetics.titanium_bones.desc"
+		},
+		{
+			"type": "cybernetics:incompatible_implant_tag",
+			"tag": "cybernetics:cybernetic_type/bone"
+		},
+		{
+			"type": "cybernetics:attribute_modifiers",
+			"modifiers": [
+				{
+					"attribute": "cybernetics:cybernetic_load",
+					"amount": 12
+				},
+				{
+					"attribute": "minecraft:generic.max_health",
+					"amount": 0.3,
+					"operation": "multiply"
+				}
+			]
+		}
+	]
+}

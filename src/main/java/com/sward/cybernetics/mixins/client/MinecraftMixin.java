@@ -1,4 +1,4 @@
-package com.sward.cybernetics.mixins;
+package com.sward.cybernetics.mixins.client;
 
 import com.sward.cybernetics.attributes.CyberAttributes;
 import com.sward.cybernetics.entities.IMotionTrackable;
@@ -26,7 +26,7 @@ public abstract class MinecraftMixin
 			return;
 		}
 
-		if (motionTrackable.cybernetics$getMotionTrackerSpeed() <= 0.2D)
+		if (motionTrackable.cybernetics$getMotionTrackerSpeed() <= 0.1D)
 		{
 			return;
 		}

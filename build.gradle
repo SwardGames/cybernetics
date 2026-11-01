@@ -127,6 +127,16 @@ jarJar.enable()
 
 repositories {
     maven {
+        name = 'Fzzy Maven'
+        url = 'https://maven.fzzyhmstrs.me/'
+        content { includeGroup 'me.fzzyhmstrs' }
+    }
+    maven {
+        name = 'Kotlin for Forge'
+        url = 'https://thedarkcolour.github.io/KotlinForForge/'
+        content { includeGroup 'thedarkcolour' }
+    }
+    maven {
         name = 'Illusive Soulworks'
         url = 'https://maven.theillusivec4.top/'
         content { includeGroup 'top.theillusivec4.curios' }
@@ -164,6 +174,13 @@ dependencies {
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
+    // Required configuration API. Fzzy bundles its support libraries; KFF supplies Kotlin.
+    implementation fg.deobf("me.fzzyhmstrs:fzzy_config:${fzzy_config_version}") {
+        // The published metadata references the NeoForge KFF variant; use Forge explicitly.
+        transitive = false
+    }
+    implementation "thedarkcolour:kotlinforforge:${kotlin_for_forge_version}"
+
     // Forge supplies Mixin at runtime; the processor generates the refmap for production.
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
@@ -187,11 +204,6 @@ dependencies {
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
     runtimeOnly fg.deobf("curse.maven:configured-457570:${configured_file_id}")
-
-    // Enigmatic Legacy and its additional required libraries are only loaded at runtime.
-    runtimeOnly fg.deobf("maven.modrinth:enigmatic-legacy:${enigmatic_legacy_version}")
-    runtimeOnly fg.deobf("maven.modrinth:patchouli:${patchouli_version}")
-    runtimeOnly fg.deobf("maven.modrinth:caelus:${caelus_version}")
 
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
@@ -218,6 +230,7 @@ tasks.named('processResources', ProcessResources).configure {
             minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
             forge_version: forge_version, forge_version_range: forge_version_range,
             loader_version_range: loader_version_range,
+            fzzy_config_version_range: fzzy_config_version_range,
             mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
             mod_authors: mod_authors, mod_description: mod_description,
     ]

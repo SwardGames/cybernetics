@@ -1,7 +1,8 @@
 package com.sward.cybernetics.inventory;
 
-import com.sward.cybernetics.CyberConfig;
-import com.sward.cybernetics.data.CyberneticsSlotGroup;
+import com.sward.cybernetics.config.CyberConfig;
+import com.sward.cybernetics.config.CyberSlotGroup;
+import com.sward.cybernetics.config.CyberSlotType;
 import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.world.Container;
@@ -25,9 +26,8 @@ public class OperatingTableMenu extends AbstractContainerMenu
 			containerId,
 			playerInv,
 			new SimpleContainer(
-				CyberConfig.Server.getSlotGroups()
-					.stream()
-					.mapToInt(CyberneticsSlotGroup::slotCount)
+				CyberConfig.SLOTS.groups.stream()
+					.mapToInt(g -> g.slotTypes.stream().mapToInt(s -> s.count.get()).sum())
 					.sum()
 			)
 		);
@@ -41,29 +41,45 @@ public class OperatingTableMenu extends AbstractContainerMenu
 		int l = 15 + 11;
 		int r = 15 + 11;
 
-		for (CyberneticsSlotGroup group : CyberConfig.Server.getSlotGroups())
-		{
-			int slotCount = group.slotCount();
-			boolean onRight = group.onRight();
+		boolean onRight = false;
 
+		for (CyberSlotGroup group : CyberConfig.SLOTS.groups)
+		{
 			int x0 = onRight ? 116 : 8;
 			int y0 = onRight ? r : l;
 
-			for (int j = 0; j < slotCount; ++j)
-			{
-				this.addSlot(new CyberneticSlot(cyberInv, z, x0 + (j % 3) * 18, y0 + (j / 3) * 18, group.id(), j));
+			int n = 0;
 
-				++z;
+			for (CyberSlotType type : group.slotTypes)
+			{
+				for (int i = 0; i < type.count.get(); ++i)
+				{
+					this.addSlot(
+						new CyberneticSlot(
+							cyberInv,
+							z,
+							x0 + (n % 3) * 18,
+							y0 + (n / 3) * 18,
+							playerInv.player,
+							type.id.get()
+						)
+					);
+
+					++n;
+					++z;
+				}
 			}
 
 			if (onRight)
 			{
-				r += ((slotCount + 2) / 3) * 18 + 11;
+				r += ((n + 2) / 3) * 18 + 11;
 			}
 			else
 			{
-				l += ((slotCount + 2) / 3) * 18 + 11;
+				l += ((n + 2) / 3) * 18 + 11;
 			}
+
+			onRight = !onRight;
 		}
 
 		for (int j = 0; j < 3; ++j)

@@ -1,13 +1,19 @@
 package com.sward.cybernetics.inventory;
 
-import com.sward.cybernetics.CyberConfig;
+import com.sward.cybernetics.config.CyberConfig;
+import com.sward.cybernetics.config.CyberSlotType;
+import com.sward.cybernetics.config.CyberSlotGroup;
+import com.sward.cybernetics.cybernetics.CyberneticDefinition;
+import com.sward.cybernetics.cybernetics.events.behaviour.OnTick;
+import com.sward.cybernetics.cybernetics.events.implanting.OnImplanted;
+import com.sward.cybernetics.cybernetics.events.implanting.OnUnimplanted;
 import com.sward.cybernetics.capabilities.ICyberneticsInventory;
-import com.sward.cybernetics.data.CyberneticsSlotGroup;
-import com.sward.cybernetics.items.CyberneticItem;
+import com.sward.cybernetics.cybernetics.CyberneticDefinitions;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Getter;
+import me.fzzyhmstrs.fzzy_config.validation.collection.ValidatedList;
 import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.NonNullList;
@@ -16,16 +22,12 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.ContainerHelper;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
-import java.util.Map;
 
 @FieldsAreNonnullByDefault
 @ParametersAreNonnullByDefault
@@ -33,7 +35,7 @@ import java.util.Map;
 public class CyberneticsInventory implements ICyberneticsInventory
 {
 	public final List<NonNullList<ItemStack>> compartments = new ObjectArrayList<>();
-	public final Object2IntMap<String> groupIndices = new Object2IntOpenHashMap<>();
+	public final Object2IntMap<String> slotCompartmentIndices = new Object2IntOpenHashMap<>();
 	public final int containerSize;
 	public final Player player;
 
@@ -45,18 +47,18 @@ public class CyberneticsInventory implements ICyberneticsInventory
 	public CyberneticsInventory(Player player)
 	{
 		int containerSize = 0;
+		int slotType = 0;
 
-		List<CyberneticsSlotGroup> groups = CyberConfig.Server.getSlotGroups();
-
-		for (int i = 0; i < groups.size(); i++)
+		for (CyberSlotGroup group : CyberConfig.SLOTS.groups)
 		{
-			CyberneticsSlotGroup group = groups.get(i);
+			for (CyberSlotType type : group.slotTypes)
+			{
+				this.compartments.add(NonNullList.withSize(type.count.get(), ItemStack.EMPTY));
+				this.slotCompartmentIndices.put(type.id.get(), slotType);
 
-			this.compartments.add(NonNullList.withSize(group.slotCount(), ItemStack.EMPTY));
-
-			this.groupIndices.put(group.id(), i);
-
-			containerSize += group.slotCount();
+				containerSize += type.count.get();
+				++slotType;
+			}
 		}
 
 		this.containerSize = containerSize;
@@ -171,14 +173,18 @@ public class CyberneticsInventory implements ICyberneticsInventory
 
 					if (!ItemStack.isSameItem(prevStack, stack))
 					{
-						if (prevStack.getItem() instanceof CyberneticItem prevItem)
+						CyberneticDefinition prevItemDefinition = CyberneticDefinitions.forItem(prevStack.getItem());
+
+						if (prevItemDefinition != null)
 						{
-							prevItem.onUnequipped(this.player);
+							prevItemDefinition.getEvent(OnUnimplanted.EVENT).unimplanted(stack, this.player);
 						}
 
-						if (stack.getItem() instanceof CyberneticItem newItem)
+						CyberneticDefinition newItemDefinition = CyberneticDefinitions.forItem(stack.getItem());
+
+						if (newItemDefinition != null)
 						{
-							newItem.onEquipped(this.player);
+							newItemDefinition.getEvent(OnImplanted.EVENT).implanted(stack, this.player);
 						}
 
 						this.previousStacks.set(i, stack.copy());
@@ -244,9 +250,11 @@ public class CyberneticsInventory implements ICyberneticsInventory
 		{
 			for (ItemStack stack : items)
 			{
-				if (stack.getItem() instanceof CyberneticItem cyberneticItem)
+				CyberneticDefinition definition = CyberneticDefinitions.forItem(stack.getItem());
+
+				if (definition != null)
 				{
-					cyberneticItem.onEquippedTick(this.player.level(), this.player);
+					definition.getEvent(OnTick.EVENT).tick(stack, this.player);
 				}
 			}
 		}
@@ -257,7 +265,7 @@ public class CyberneticsInventory implements ICyberneticsInventory
 	{
 		CompoundTag result = new CompoundTag();
 
-		for (Object2IntMap.Entry<String> group : this.groupIndices.object2IntEntrySet())
+		for (Object2IntMap.Entry<String> group : this.slotCompartmentIndices.object2IntEntrySet())
 		{
 			ListTag list = new ListTag();
 
@@ -279,12 +287,12 @@ public class CyberneticsInventory implements ICyberneticsInventory
 	{
 		for (String key : nbt.getAllKeys())
 		{
-			if (!this.groupIndices.containsKey(key))
+			if (!this.slotCompartmentIndices.containsKey(key))
 			{
 				continue;
 			}
 
-			NonNullList<ItemStack> items = this.compartments.get(this.groupIndices.getInt(key));
+			NonNullList<ItemStack> items = this.compartments.get(this.slotCompartmentIndices.getInt(key));
 
 			ListTag listTag = nbt.getList(key, ListTag.TAG_COMPOUND);
 

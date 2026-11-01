@@ -8,7 +8,7 @@ import java.util.function.Function;
 
 public class DyedRegistryObjects<T> implements Function<DyeColor, T>
 {
-	private final RegistryObject[] registryObjects;
+	private final RegistryObject<?>[] registryObjects;
 
 	public DyedRegistryObjects(DeferredRegister<? super T> register, String name, Function<DyeColor, T> func)
 	{

@@ -1,12 +1,13 @@
 package com.sward.cybernetics.client.screens;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.sward.cybernetics.CyberConfig;
+import com.sward.cybernetics.client.screens.util.Label;
+import com.sward.cybernetics.config.CyberConfig;
 import com.sward.cybernetics.attributes.CyberAttributes;
-import com.sward.cybernetics.data.CyberneticsSlotGroup;
+import com.sward.cybernetics.config.CyberSlotType;
+import com.sward.cybernetics.config.CyberSlotGroup;
 import com.sward.cybernetics.inventory.CyberneticSlot;
 import com.sward.cybernetics.inventory.OperatingTableMenu;
-import com.sward.cybernetics.items.CyberneticItem;
 import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.Font;
@@ -20,8 +21,12 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.sward.cybernetics.Cybernetics.id;
 import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventoryFollowsMouse;
@@ -33,12 +38,63 @@ public class OperatingTableScreen extends AbstractContainerScreen<OperatingTable
 {
 	public static final ResourceLocation INVENTORY_LOCATION = id("textures/gui/container/operating_table.png");
 
+	private final List<Label> groupLabels = new ArrayList<>();
+
 	public OperatingTableScreen(OperatingTableMenu menu, Inventory playerInventory, Component title)
 	{
 		super(menu, playerInventory, title);
 		this.imageWidth = 176;
 		this.imageHeight = 224;
 		this.inventoryLabelY = 131;
+	}
+
+	@Override
+	protected void init()
+	{
+		super.init();
+
+		int l = 16;
+		int r = 16;
+
+		boolean onRight = false;
+
+		for (CyberSlotGroup group : CyberConfig.SLOTS.groups)
+		{
+			FormattedCharSequence text = Component
+				.translatable("cybernetics_group." + group.id.get())
+				.getVisualOrderText();
+
+			int width = this.font.width(text);
+
+			this.groupLabels.add(
+				Label.at(
+					text,
+					this.font,
+					onRight ? 116 - Math.max(width - 18 * 3, 0) : 8,
+					onRight ? r : l,
+					0x00FF00,
+					false
+				)
+			);
+
+			int n = 0;
+
+			for (CyberSlotType type : group.slotTypes)
+			{
+				n += type.count.get();
+			}
+
+			if (onRight)
+			{
+				r += ((n + 2) / 3) * 18 + 11;
+			}
+			else
+			{
+				l += ((n + 2) / 3) * 18 + 11;
+			}
+
+			onRight = !onRight;
+		}
 	}
 
 	@Override
@@ -79,25 +135,20 @@ public class OperatingTableScreen extends AbstractContainerScreen<OperatingTable
 					256
 				);
 
-				if (cyberSlot.groupIndex != 0)
-				{
-					continue;
-				}
-
 				if (cyberSlot.hasItem())
 				{
 					continue;
 				}
 
-				CyberneticsSlotGroup group = CyberConfig.Server.getSlotGroup(cyberSlot.groupId);
+				CyberSlotType slotTypes = CyberConfig.SLOTS.findSlotType(cyberSlot.type);
 
-				if (group == null || group.primarySlotIcon() == null)
+				if (slotTypes == null || slotTypes.icon.isEmpty())
 				{
 					continue;
 				}
 
 				guiGraphics.blit(
-					id("textures/gui/primary_slot/" + group.primarySlotIcon() + ".png"),
+					id("textures/gui/slot_icons/" + slotTypes.icon + ".png"),
 					x + cyberSlot.x,
 					y + cyberSlot.y,
 					0,
@@ -141,7 +192,7 @@ public class OperatingTableScreen extends AbstractContainerScreen<OperatingTable
 		);
 
 		int capacity = (int) this.minecraft.player.getAttributeValue(CyberAttributes.CAPACITY.get());
-		int totalLoad = getTotalLoad();
+		int totalLoad = (int) this.minecraft.player.getAttributeValue(CyberAttributes.LOAD.get());
 
 		drawCenteredString(
 			guiGraphics,
@@ -153,35 +204,9 @@ public class OperatingTableScreen extends AbstractContainerScreen<OperatingTable
 			false
 		);
 
-		int l = 16;
-		int r = 16;
-
-		for (CyberneticsSlotGroup group : CyberConfig.Server.getSlotGroups())
+		for (Label label : this.groupLabels)
 		{
-			int slotCount = group.slotCount();
-			boolean onRight = group.onRight();
-
-			FormattedCharSequence str = Component.translatable("cybernetics_group." + group.id()).getVisualOrderText();
-
-			int width = this.font.width(str);
-
-			guiGraphics.drawString(
-				this.font,
-				Component.translatable("cybernetics_group." + group.id()),
-				onRight ? 116 - Math.max(width - 18 * 3, 0) : 8,
-				onRight ? r : l,
-				0x00FF00,
-				false
-			);
-
-			if (onRight)
-			{
-				r += ((slotCount + 2) / 3) * 18 + 11;
-			}
-			else
-			{
-				l += ((slotCount + 2) / 3) * 18 + 11;
-			}
+			label.draw(guiGraphics);
 		}
 
 		RenderSystem.enableBlend();
@@ -205,7 +230,32 @@ public class OperatingTableScreen extends AbstractContainerScreen<OperatingTable
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick)
 	{
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
-		renderTooltip(guiGraphics, mouseX, mouseY);
+
+		if (this.menu.getCarried().isEmpty() && this.hoveredSlot != null)
+		{
+			if (this.hoveredSlot.hasItem())
+			{
+				ItemStack itemstack = this.hoveredSlot.getItem();
+
+				guiGraphics.renderTooltip(
+					this.font,
+					this.getTooltipFromContainerItem(itemstack),
+					itemstack.getTooltipImage(),
+					itemstack,
+					mouseX,
+					mouseY
+				);
+			}
+			else if (this.hoveredSlot instanceof CyberneticSlot cyberSlot)
+			{
+				guiGraphics.renderTooltip(
+					this.font,
+					Component.translatable("cybernetics_slot_type." + cyberSlot.type),
+					mouseX,
+					mouseY
+				);
+			}
+		}
 	}
 
 	@Override
@@ -221,29 +271,17 @@ public class OperatingTableScreen extends AbstractContainerScreen<OperatingTable
 		);
 	}
 
-	private void drawCenteredString(GuiGraphics guiGraphics, Font font, Component text, int x, int y, int color, boolean dropShadow)
+	private void drawCenteredString(
+		GuiGraphics guiGraphics,
+		Font font,
+		Component text,
+		int x,
+		int y,
+		int color,
+		boolean dropShadow
+	)
 	{
 		FormattedCharSequence charSequence = text.getVisualOrderText();
 		guiGraphics.drawString(font, charSequence, x - font.width(charSequence) / 2, y, color, dropShadow);
-	}
-
-	private int getTotalLoad()
-	{
-		int result = 0;
-
-		NonNullList<Slot> slots = this.menu.slots;
-
-		for (int i = 0; i < slots.size() - Inventory.INVENTORY_SIZE; ++i)
-		{
-			if (slots.get(i) instanceof CyberneticSlot cyberSlot)
-			{
-				if (cyberSlot.getItem().getItem() instanceof CyberneticItem item)
-				{
-					result = result + item.capacityCost;
-				}
-			}
-		}
-
-		return result;
 	}
 }

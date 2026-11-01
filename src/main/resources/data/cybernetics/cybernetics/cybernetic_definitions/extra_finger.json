@@ -1,0 +1,18 @@
+{
+	"slot": "hands",
+	"components": [
+		{
+			"type": "cybernetics:description",
+			"text": "item.cybernetics.extra_finger.desc"
+		},
+		{
+			"type": "cybernetics:curios_slots",
+			"slots": [
+				{
+					"slot": "ring",
+					"amount": 1
+				}
+			]
+		}
+	]
+}

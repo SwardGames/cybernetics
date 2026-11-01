@@ -1,0 +1,26 @@
+{
+	"slot": "eye_augments",
+	"components": [
+		{
+			"type": "cybernetics:description",
+			"text": "item.cybernetics.target_scanner.desc"
+		},
+		{
+			"type": "cybernetics:required_implant_tag",
+			"tag": "cybernetics:cybernetic_type/eye"
+		},
+		{
+			"type": "cybernetics:attribute_modifiers",
+			"modifiers": [
+				{
+					"attribute": "cybernetics:cybernetic_load",
+					"amount": 14
+				},
+				{
+					"attribute": "cybernetics:motion_scanner_range",
+					"amount": 24
+				}
+			]
+		}
+	]
+}

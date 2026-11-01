@@ -1,0 +1,36 @@
+{
+	"slot": "augments",
+	"components": [
+		{
+			"type": "cybernetics:description",
+			"text": "item.cybernetics.hollow_bones.desc"
+		},
+		{
+			"type": "cybernetics:incompatible_implant_tag",
+			"tag": "cybernetics:cybernetic_type/bone"
+		},
+		{
+			"type": "cybernetics:attribute_modifiers",
+			"modifiers": [
+				{
+					"attribute": "cybernetics:cybernetic_load",
+					"amount": 16
+				},
+				{
+					"attribute": "minecraft:generic.movement_speed",
+					"amount": 0.15,
+					"operation": "multiply"
+				},
+				{
+					"attribute": "minecraft:generic.knockback_resistance",
+					"amount": -0.10
+				},
+				{
+					"attribute": "minecraft:generic.armor",
+					"amount": -0.10,
+					"operation": "multiply"
+				}
+			]
+		}
+	]
+}
