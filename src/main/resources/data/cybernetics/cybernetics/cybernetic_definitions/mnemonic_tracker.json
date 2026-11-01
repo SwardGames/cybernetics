@@ -1,0 +1,22 @@
+{
+	"slot": "nervous_system",
+	"components": [
+		{
+			"type": "cybernetics:description",
+			"text": "item.cybernetics.mnemonic_tracker.desc"
+		},
+		{
+			"type": "cybernetics:attribute_modifiers",
+			"modifiers": [
+				{
+					"attribute": "cybernetics:cybernetic_load",
+					"amount": 7
+				},
+				{
+					"attribute": "cybernetics:tracking_duration",
+					"amount": 3
+				}
+			]
+		}
+	]
+}

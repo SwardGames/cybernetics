@@ -2,6 +2,7 @@ package com.sward.cybernetics;
 
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
+import com.sward.cybernetics.blocks.OperatingTableBlock;
 import com.sward.cybernetics.compat.curios.components.CuriosSlotsComponent;
 import com.sward.cybernetics.config.CyberConfig;
 import com.sward.cybernetics.cybernetics.CyberneticDefinition;
@@ -19,21 +20,22 @@ import com.sward.cybernetics.items.CyberCreativeTabs;
 import com.sward.cybernetics.items.CyberItems;
 import com.sward.cybernetics.inventory.CyberMenuTypes;
 import com.sward.cybernetics.registries.CyberRegistryKeys;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
+import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.DataPackRegistryEvent;
-import net.minecraftforge.registries.NewRegistryEvent;
-import net.minecraftforge.registries.RegisterEvent;
-import net.minecraftforge.registries.RegistryBuilder;
+import net.minecraftforge.registries.*;
 import org.slf4j.Logger;
 
 import java.util.Optional;
@@ -64,6 +66,7 @@ public final class Cybernetics
 		modEventBus.addListener(Cybernetics::registerEvent);
 
 		MinecraftForge.EVENT_BUS.addListener(Cybernetics::tickPlayer);
+		MinecraftForge.EVENT_BUS.addListener(Cybernetics::sleepingTimeCheck);
 		MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, Cybernetics::attachEntityCapabilities);
 	}
 
@@ -74,9 +77,10 @@ public final class Cybernetics
 
 	private static void attributeModification(EntityAttributeModificationEvent e)
 	{
-		e.add(EntityType.PLAYER, CyberAttributes.CAPACITY.get());
-		e.add(EntityType.PLAYER, CyberAttributes.LOAD.get());
-		e.add(EntityType.PLAYER, CyberAttributes.MOTION_SCANNER_RANGE.get());
+		for (RegistryObject<Attribute> attribute : CyberAttributes.REGISTER.getEntries())
+		{
+			e.add(EntityType.PLAYER, attribute.get());
+		}
 	}
 
 	private static void newRegistries(NewRegistryEvent e)
@@ -128,9 +132,9 @@ public final class Cybernetics
 		}
 	}
 
-	private static void tickPlayer(TickEvent.PlayerTickEvent player)
+	private static void tickPlayer(TickEvent.PlayerTickEvent e)
 	{
-		Optional<ICyberneticsInventory> cap = player.player.getCapability(CAP).resolve();
+		Optional<ICyberneticsInventory> cap = e.player.getCapability(CAP).resolve();
 
 		if (cap.isEmpty())
 		{
@@ -138,6 +142,21 @@ public final class Cybernetics
 		}
 
 		cap.get().tick();
+	}
+
+	private static void sleepingTimeCheck(SleepingTimeCheckEvent e)
+	{
+		Optional<BlockPos> maybePos = e.getSleepingLocation();
+
+		if (maybePos.isEmpty())
+		{
+			return;
+		}
+
+		if (e.getEntity().level().getBlockState(maybePos.get()).getBlock() instanceof OperatingTableBlock)
+		{
+			e.setResult(Event.Result.ALLOW);
+		}
 	}
 
 	private static void attachEntityCapabilities(AttachCapabilitiesEvent<Entity> e)

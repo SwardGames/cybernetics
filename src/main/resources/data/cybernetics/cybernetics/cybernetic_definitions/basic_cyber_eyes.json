@@ -3,7 +3,7 @@
 	"components": [
 		{
 			"type": "cybernetics:description",
-			"text": "item.cybernetics.cyber_eyes.desc"
+			"text": "item.cybernetics.basic_cyber_eyes.desc"
 		},
 		{
 			"type": "cybernetics:attribute_modifiers",

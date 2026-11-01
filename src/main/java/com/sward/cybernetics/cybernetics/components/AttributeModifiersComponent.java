@@ -4,12 +4,12 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.sward.cybernetics.attributes.AttributeFormatters;
 import com.sward.cybernetics.cybernetics.ICyberneticComponent;
 import com.sward.cybernetics.cybernetics.events.implanting.OnImplanted;
 import com.sward.cybernetics.cybernetics.events.display.AppendModifierTooltip;
 import com.sward.cybernetics.cybernetics.events.implanting.OnUnimplanted;
 import com.sward.cybernetics.util.AttributeModifierCodec;
-import net.minecraft.ChatFormatting;
 import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
@@ -17,7 +17,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -25,8 +24,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
-
-import static net.minecraft.world.item.ItemStack.ATTRIBUTE_MODIFIER_FORMAT;
+import java.util.Map;
 
 @FieldsAreNonnullByDefault
 @ParametersAreNonnullByDefault
@@ -76,47 +74,13 @@ public record AttributeModifiersComponent(
 	@Override
 	public void appendModifierTooltip(List<Component> tooltip, ItemStack stack, @Nullable Player player, boolean isAdvanced)
 	{
-		for (AttributeModifierDefinition definition : this.modifiersList)
+		for (Map.Entry<Attribute, AttributeModifier> entry : this.modifiers.entries())
 		{
-			Attribute attribute = definition.attribute;
-			double baseAmount = definition.amount;
-			Operation operation = definition.operation;
+			Component component = AttributeFormatters.format(entry.getKey(), entry.getValue());
 
-			double displayedAmount;
-
-			if (operation != Operation.MULTIPLY_BASE && operation != Operation.MULTIPLY_TOTAL)
+			if (component != null)
 			{
-				if (attribute.equals(Attributes.KNOCKBACK_RESISTANCE))
-				{
-					displayedAmount = baseAmount * 10D;
-				}
-				else
-				{
-					displayedAmount = baseAmount;
-				}
-			}
-			else
-			{
-				displayedAmount = baseAmount * 100D;
-			}
-
-			if (baseAmount > 0D)
-			{
-				tooltip.add(Component.translatable(
-					"attribute.modifier.plus." + operation.toValue(),
-					ATTRIBUTE_MODIFIER_FORMAT.format(displayedAmount),
-					Component.translatable(attribute.getDescriptionId())
-				).withStyle(ChatFormatting.BLUE));
-			}
-			else if (baseAmount < 0D)
-			{
-				displayedAmount *= -1;
-
-				tooltip.add(Component.translatable(
-					"attribute.modifier.take." + operation.toValue(),
-					ATTRIBUTE_MODIFIER_FORMAT.format(displayedAmount),
-					Component.translatable(attribute.getDescriptionId())
-				).withStyle(ChatFormatting.RED));
+				tooltip.add(component);
 			}
 		}
 	}

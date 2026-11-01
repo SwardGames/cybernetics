@@ -26,19 +26,42 @@ public final class CyberItems
 	public static final RegistryObject<Item> NEUTRAL_COPROCESSOR = cybernetic("neural_coprocessor");
 
 	// Eyes
-	public static final RegistryObject<Item> CYBER_EYES = cybernetic("cyber_eyes");
+	public static final RegistryObject<Item> BASIC_CYBER_EYES = cybernetic("basic_cyber_eyes");
+	public static final RegistryObject<Item> STALKER_CYBER_EYES = cybernetic("stalker_cyber_eyes");
+	public static final RegistryObject<Item> FARSIGHT_CYBER_EYES = cybernetic("farsight_cyber_eyes");
 
-	public static final RegistryObject<Item> TARGET_SCANNER = cybernetic("target_scanner");
+	// Nervous System
+	public static final RegistryObject<Item> REFLEX_BYPASS = cybernetic("reflex_bypass");
+	public static final RegistryObject<Item> SHINOBI_MODULE = cybernetic("shinobi_module");
+	public static final RegistryObject<Item> MNEMONIC_TRACKER = cybernetic("mnemonic_tracker");
 
 	// Arms
+
+	// Hands
 	public static final RegistryObject<Item> EXTRA_FINGER = cybernetic("extra_finger");
 
-	// Augments
-	public static final RegistryObject<Item> SUBDERMAL_ARMOR = cybernetic("subdermal_armor");
+	// Legs
 
-	// Augments / Bones
+	// Feet
+	public static final RegistryObject<Item> PADDED_SOLES = cybernetic("padded_soles");
+
+	// Heart
+	public static final RegistryObject<Item> RESUSCITATOR = cybernetic("resuscitator");
+
+	// Circulatory
+	public static final RegistryObject<Item> BLOOD_FILTER = cybernetic("blood_filter");
+
+	// Spine
+
+	// Skeleton
 	public static final RegistryObject<Item> HOLLOW_BONES = cybernetic("hollow_bones");
 	public static final RegistryObject<Item> TITANIUM_BONES = cybernetic("titanium_bones");
+	public static final RegistryObject<Item> TORTOISESHELL = cybernetic("tortoiseshell");
+
+	// Muscle
+	public static final RegistryObject<Item> SUBDERMAL_ARMOR = cybernetic("subdermal_armor");
+
+	// Visceral
 
 	private static RegistryObject<Item> cybernetic(String name)
 	{

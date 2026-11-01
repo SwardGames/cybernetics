@@ -1,0 +1,26 @@
+{
+	"slot": "nervous_system",
+	"components": [
+		{
+			"type": "cybernetics:description",
+			"text": "item.cybernetics.shinobi_module.desc"
+		},
+		{
+			"type": "cybernetics:attribute_modifiers",
+			"modifiers": [
+				{
+					"attribute": "cybernetics:cybernetic_load",
+					"amount": 21
+				},
+				{
+					"attribute": "cybernetics:dodge_chance",
+					"amount": 0.2
+				},
+				{
+					"attribute": "cybernetics:catch_arrow_chance",
+					"amount": 0.25
+				}
+			]
+		}
+	]
+}

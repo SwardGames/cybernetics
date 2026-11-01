@@ -1,8 +1,16 @@
-// 1.20.1	2026-10-30T00:58:17.0942858	Item Models: cybernetics
-ad767fbe0d4b799fb60fe07097c1bb3bfe858b68 assets/cybernetics/models/item/cyber_eyes.json
+// 1.20.1	2026-11-01T19:24:44.4693771	Item Models: cybernetics
+4a20e13189b35b046ef2cb5fc26da55acbed50d8 assets/cybernetics/models/item/basic_cyber_eyes.json
+989f8ff0a43bd970eda485165625da71b215df92 assets/cybernetics/models/item/blood_filter.json
 6a1f0ce8bba0b42af9c7578e926de8a06a9017a4 assets/cybernetics/models/item/extra_finger.json
+ea568a79da277cce75d6d1c63ad755dc9edc371a assets/cybernetics/models/item/farsight_cyber_eyes.json
 00781b16675f206296042f4617db1f4941251bc4 assets/cybernetics/models/item/hollow_bones.json
+0f5527d7b2974bcc2a4e6eba2fb80c8b56feeb87 assets/cybernetics/models/item/mnemonic_tracker.json
 48b318001c419dfcf15dce70f6b07280a695420c assets/cybernetics/models/item/neural_coprocessor.json
+271f1cf945589cdbac9a7db5e009032dc1a8e38e assets/cybernetics/models/item/padded_soles.json
+b38a241c6ad9c68dcbc43c1b62fffc13e8272e39 assets/cybernetics/models/item/reflex_bypass.json
+17164a1cdb7e5059e8c41b7835c5c1d30bbb9237 assets/cybernetics/models/item/resuscitator.json
+a6b736f78e014357c940bb0e13e667d185d4f050 assets/cybernetics/models/item/shinobi_module.json
+10a8f27da7a49ce89b460e5702a1cb392766cd21 assets/cybernetics/models/item/stalker_cyber_eyes.json
 089c8512e47a8d83dba1460db076bef815ec6e4d assets/cybernetics/models/item/subdermal_armor.json
-f8c298a8e8bca18d6e89e39418161769c4ea91d3 assets/cybernetics/models/item/target_scanner.json
 6f39c1a92d308f00a1f0f3046fd862d6194e1622 assets/cybernetics/models/item/titanium_bones.json
+8caa65f0582cc3e27525c98fe33ae20446dc179f assets/cybernetics/models/item/tortoiseshell.json

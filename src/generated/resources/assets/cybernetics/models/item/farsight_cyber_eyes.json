@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "cybernetics:item/cyber_eyes"
+    "layer0": "cybernetics:item/farsight_cyber_eyes"
   }
 }

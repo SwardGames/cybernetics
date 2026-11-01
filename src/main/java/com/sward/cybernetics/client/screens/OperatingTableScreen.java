@@ -145,8 +145,8 @@ public class OperatingTableScreen extends AbstractContainerScreen<OperatingTable
 		renderEntityInInventoryFollowsMouse(
 			guiGraphics,
 			x + this.imageWidth / 2,
-			y + 100,
-			30,
+			y + 111,
+			40,
 			(float) (x + this.imageWidth / 2) - mouseX,
 			(float) (y + 100 - 50) - mouseY,
 			this.minecraft.player

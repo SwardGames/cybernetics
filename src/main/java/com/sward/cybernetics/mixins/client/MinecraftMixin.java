@@ -1,9 +1,7 @@
 package com.sward.cybernetics.mixins.client;
 
-import com.sward.cybernetics.attributes.CyberAttributes;
 import com.sward.cybernetics.entities.IMotionTrackable;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,26 +24,7 @@ public abstract class MinecraftMixin
 			return;
 		}
 
-		if (motionTrackable.cybernetics$getMotionTrackerSpeed() <= 0.1D)
-		{
-			return;
-		}
-
-		LocalPlayer player = Minecraft.getInstance().player;
-
-		if (player == null || !player.isAlive())
-		{
-			return;
-		}
-
-		double scannerRange = player.getAttributeValue(CyberAttributes.MOTION_SCANNER_RANGE.get());
-
-		if (scannerRange <= 0D)
-		{
-			return;
-		}
-
-		if (player.distanceToSqr(entity) <= scannerRange * scannerRange)
+		if (motionTrackable.cybernetics$isTracked())
 		{
 			callback.setReturnValue(true);
 		}

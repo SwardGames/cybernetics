@@ -1,0 +1,22 @@
+{
+	"slot": "nervous_system",
+	"components": [
+		{
+			"type": "cybernetics:description",
+			"text": "item.cybernetics.reflex_bypass.desc"
+		},
+		{
+			"type": "cybernetics:attribute_modifiers",
+			"modifiers": [
+				{
+					"attribute": "cybernetics:cybernetic_load",
+					"amount": 14
+				},
+				{
+					"attribute": "cybernetics:dodge_chance",
+					"amount": 0.15
+				}
+			]
+		}
+	]
+}
