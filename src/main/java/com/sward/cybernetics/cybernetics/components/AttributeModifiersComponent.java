@@ -7,7 +7,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.sward.cybernetics.attributes.AttributeFormatters;
 import com.sward.cybernetics.cybernetics.ICyberneticComponent;
 import com.sward.cybernetics.cybernetics.events.implanting.OnImplanted;
-import com.sward.cybernetics.cybernetics.events.display.AppendModifierTooltip;
+import com.sward.cybernetics.cybernetics.events.display.AppendWhenImplantedTooltip;
 import com.sward.cybernetics.cybernetics.events.implanting.OnUnimplanted;
 import com.sward.cybernetics.util.AttributeModifierCodec;
 import net.minecraft.FieldsAreNonnullByDefault;
@@ -32,7 +32,7 @@ import java.util.Map;
 public record AttributeModifiersComponent(
 	List<AttributeModifierDefinition> modifiersList,
 	Multimap<Attribute, AttributeModifier> modifiers
-) implements ICyberneticComponent, OnImplanted, OnUnimplanted, AppendModifierTooltip
+) implements ICyberneticComponent, OnImplanted, OnUnimplanted, AppendWhenImplantedTooltip
 {
 	public static final Codec<AttributeModifiersComponent> CODEC = RecordCodecBuilder.create(
 		instance -> instance.group(
@@ -66,13 +66,13 @@ public record AttributeModifiersComponent(
 	}
 
 	@Override
-	public int modifierTooltipPriority()
+	public int whenImplantedTooltipPriority()
 	{
 		return 2000;
 	}
 
 	@Override
-	public void appendModifierTooltip(List<Component> tooltip, ItemStack stack, @Nullable Player player, boolean isAdvanced)
+	public void appendWhenImplantedTooltip(List<Component> tooltip, ItemStack stack, @Nullable Player player, boolean isAdvanced)
 	{
 		for (Map.Entry<Attribute, AttributeModifier> entry : this.modifiers.entries())
 		{

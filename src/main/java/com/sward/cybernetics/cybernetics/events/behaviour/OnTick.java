@@ -23,7 +23,7 @@ public interface OnTick
 		@Override
 		public void tick(ItemStack stack, LivingEntity entity)
 		{
-			for (OnTick component : components)
+			for (OnTick component : this.components)
 			{
 				component.tick(stack, entity);
 			}

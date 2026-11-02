@@ -1,14 +1,17 @@
 package com.sward.cybernetics.inventory;
 
+import com.mojang.datafixers.util.Function3;
 import com.sward.cybernetics.config.CyberConfig;
 import com.sward.cybernetics.config.CyberSlotType;
 import com.sward.cybernetics.config.CyberSlotGroup;
 import com.sward.cybernetics.cybernetics.CyberneticDefinition;
+import com.sward.cybernetics.cybernetics.Event;
 import com.sward.cybernetics.cybernetics.events.behaviour.OnTick;
 import com.sward.cybernetics.cybernetics.events.implanting.OnImplanted;
 import com.sward.cybernetics.cybernetics.events.implanting.OnUnimplanted;
 import com.sward.cybernetics.capabilities.ICyberneticsInventory;
 import com.sward.cybernetics.cybernetics.CyberneticDefinitions;
+import com.sward.cybernetics.util.Consumer3;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -22,12 +25,14 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.function.Consumer;
 
 @FieldsAreNonnullByDefault
 @ParametersAreNonnullByDefault
@@ -211,13 +216,14 @@ public class CyberneticsInventory implements ICyberneticsInventory
 		}
 	}
 
-	public boolean contains(ItemStack pStack)
+	@Override
+	public boolean contains(ItemStack stack)
 	{
 		for (List<ItemStack> items : this.compartments)
 		{
-			for (ItemStack stack : items)
+			for (ItemStack stack1 : items)
 			{
-				if (!stack.isEmpty() && ItemStack.isSameItemSameTags(stack, pStack))
+				if (!stack1.isEmpty() && ItemStack.isSameItemSameTags(stack1, stack))
 				{
 					return true;
 				}
@@ -227,13 +233,14 @@ public class CyberneticsInventory implements ICyberneticsInventory
 		return false;
 	}
 
-	public boolean contains(TagKey<Item> pTag)
+	@Override
+	public boolean contains(TagKey<Item> tag)
 	{
 		for (List<ItemStack> items : this.compartments)
 		{
 			for (ItemStack stack : items)
 			{
-				if (!stack.isEmpty() && stack.is(pTag))
+				if (!stack.isEmpty() && stack.is(tag))
 				{
 					return true;
 				}
@@ -255,6 +262,40 @@ public class CyberneticsInventory implements ICyberneticsInventory
 				if (definition != null)
 				{
 					definition.getEvent(OnTick.EVENT).tick(stack, this.player);
+				}
+			}
+		}
+	}
+
+	@Override
+	public <T> void forEachEvent(Event<T> event, Consumer3<T, LivingEntity, ItemStack> consumer)
+	{
+		for (List<ItemStack> items : this.compartments)
+		{
+			for (ItemStack stack : items)
+			{
+				CyberneticDefinition definition = CyberneticDefinitions.forItem(stack.getItem());
+
+				if (definition != null)
+				{
+					consumer.accept(definition.getEvent(event), this.player, stack);
+				}
+			}
+		}
+	}
+
+	@Override
+	public <T, E> void handleEvent(Event<T> event, E forgeEvent, Consumer3<T, ItemStack, E> consumer)
+	{
+		for (List<ItemStack> items : this.compartments)
+		{
+			for (ItemStack stack : items)
+			{
+				CyberneticDefinition definition = CyberneticDefinitions.forItem(stack.getItem());
+
+				if (definition != null)
+				{
+					consumer.accept(definition.getEvent(event), stack, forgeEvent);
 				}
 			}
 		}

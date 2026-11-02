@@ -1,5 +1,7 @@
 {
 	"values": [
-		"cybernetics:cyber_eyes"
+		"cybernetics:basic_cyber_eyes",
+		"cybernetics:stalker_cyber_eyes",
+		"cybernetics:farsight_cyber_eyes"
 	]
 }

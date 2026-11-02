@@ -1,0 +1,22 @@
+{
+	"slot": "feet",
+	"components": [
+		{
+			"type": "cybernetics:description",
+			"text": "item.cybernetics.padded_soles.desc"
+		},
+		{
+			"type": "cybernetics:attribute_modifiers",
+			"modifiers": [
+				{
+					"attribute": "cybernetics:cybernetic_load",
+					"amount": 6
+				}
+			]
+		},
+		{
+			"type": "cybernetics:when_implanted_tooltip",
+			"text": "tooltip.cybernetics.silences_footsteps"
+		}
+	]
+}

@@ -1,0 +1,22 @@
+{
+	"slot": "hands",
+	"components": [
+		{
+			"type": "cybernetics:description",
+			"text": "item.cybernetics.impact_knuckles.desc"
+		},
+		{
+			"type": "cybernetics:attribute_modifiers",
+			"modifiers": [
+				{
+					"attribute": "cybernetics:cybernetic_load",
+					"amount": 5
+				}
+			]
+		},
+		{
+			"type": "cybernetics:unarmed_knockback",
+			"strength": 1.0
+		}
+	]
+}

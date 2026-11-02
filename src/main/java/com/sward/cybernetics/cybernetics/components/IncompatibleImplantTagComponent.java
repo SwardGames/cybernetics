@@ -62,7 +62,7 @@ public record IncompatibleImplantTagComponent(TagKey<Item> tag) implements ICybe
 			Component.translatable(
 				"tooltip.cybernetics.incompatible_implant",
 				Component.translatableWithFallback(
-					"tag." + location.getNamespace() + "." + location.getPath().replace('/', '.'),
+					"tag." + location.toLanguageKey().replace('/', '.'),
 					"#" + location
 				)
 			).withStyle(ChatFormatting.RED)

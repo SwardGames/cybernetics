@@ -24,7 +24,7 @@ public interface CanImplant
 		@Override
 		public boolean canImplant(ItemStack stack, LivingEntity entity, Container inv)
 		{
-			for (CanImplant component : components)
+			for (CanImplant component : this.components)
 			{
 				if (!component.canImplant(stack, entity, inv))
 				{

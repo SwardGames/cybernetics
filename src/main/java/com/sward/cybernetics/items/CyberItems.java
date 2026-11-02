@@ -39,6 +39,7 @@ public final class CyberItems
 
 	// Hands
 	public static final RegistryObject<Item> EXTRA_FINGER = cybernetic("extra_finger");
+	public static final RegistryObject<Item> IMPACT_KNUCKLES = cybernetic("impact_knuckles");
 
 	// Legs
 
@@ -47,11 +48,13 @@ public final class CyberItems
 
 	// Heart
 	public static final RegistryObject<Item> RESUSCITATOR = cybernetic("resuscitator");
+	public static final RegistryObject<Item> ARC_REACTOR = cybernetic("arc_reactor");
 
 	// Circulatory
 	public static final RegistryObject<Item> BLOOD_FILTER = cybernetic("blood_filter");
 
 	// Spine
+	public static final RegistryObject<Item> SPINAL_RELAY = cybernetic("spinal_relay");
 
 	// Skeleton
 	public static final RegistryObject<Item> HOLLOW_BONES = cybernetic("hollow_bones");

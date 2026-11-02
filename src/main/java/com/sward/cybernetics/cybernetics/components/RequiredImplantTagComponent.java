@@ -61,7 +61,7 @@ public record RequiredImplantTagComponent(TagKey<Item> tag) implements ICybernet
 			Component.translatable(
 				"tooltip.cybernetics.required_implant",
 				Component.translatableWithFallback(
-					"tag." + location.getNamespace() + "." + location.getPath().replace('/', '.'),
+					"tag." + location.toLanguageKey().replace('/', '.'),
 					"#" + location
 				)
 			).withStyle(ChatFormatting.BLUE)

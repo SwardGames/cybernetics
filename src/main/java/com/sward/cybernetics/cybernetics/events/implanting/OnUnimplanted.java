@@ -23,7 +23,7 @@ public interface OnUnimplanted
 		@Override
 		public void unimplanted(ItemStack stack, LivingEntity entity)
 		{
-			for (OnUnimplanted component : components)
+			for (OnUnimplanted component : this.components)
 			{
 				component.unimplanted(stack, entity);
 			}

@@ -50,6 +50,16 @@ public class CyberneticSlot extends Slot
 			return false;
 		}
 
+		for (int i = 0; i < this.container.getContainerSize(); ++i)
+		{
+			ItemStack other = this.container.getItem(i);
+
+			if (other.getItem() == stack.getItem())
+			{
+				return false;
+			}
+		}
+
 		ItemStack prevStack = this.getItem();
 		this.container.setItem(this.getContainerSlot(), stack);
 		boolean isValid = validateContents();
@@ -61,12 +71,25 @@ public class CyberneticSlot extends Slot
 	@Override
 	public boolean mayPickup(Player player)
 	{
-		if (!validateContents())
+		ItemStack prevStack = this.getItem();
+
+		if (prevStack.isEmpty())
 		{
 			return true;
 		}
 
-		ItemStack prevStack = this.getItem();
+		CyberneticDefinition definition = CyberneticDefinitions.forItem(prevStack.getItem());
+
+		if (definition == null)
+		{
+			return true;
+		}
+
+		if (!definition.getEvent(CanImplant.EVENT).canImplant(prevStack, this.player, this.container))
+		{
+			return true;
+		}
+
 		this.container.setItem(this.getContainerSlot(), ItemStack.EMPTY);
 		boolean isValid = validateContents();
 		this.container.setItem(this.getContainerSlot(), prevStack);

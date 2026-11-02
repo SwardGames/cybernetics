@@ -2,7 +2,7 @@ package com.sward.cybernetics.client;
 
 import com.sward.cybernetics.cybernetics.CyberneticDefinition;
 import com.sward.cybernetics.cybernetics.events.display.AppendTooltip;
-import com.sward.cybernetics.cybernetics.events.display.AppendModifierTooltip;
+import com.sward.cybernetics.cybernetics.events.display.AppendWhenImplantedTooltip;
 import com.sward.cybernetics.cybernetics.CyberneticDefinitions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -57,8 +57,8 @@ public class CyberneticsTooltips
 		);
 
 		List<Component> modifierTooltip = new ArrayList<>();
-		definition.getEvent(AppendModifierTooltip.EVENT)
-			.appendModifierTooltip(modifierTooltip, stack, entity, isAdvanced);
+		definition.getEvent(AppendWhenImplantedTooltip.EVENT)
+			.appendWhenImplantedTooltip(modifierTooltip, stack, entity, isAdvanced);
 
 		if (!modifierTooltip.isEmpty())
 		{

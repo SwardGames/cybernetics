@@ -29,6 +29,7 @@ public final class AttributeFormatters
 	static
 	{
 		register(Attributes.KNOCKBACK_RESISTANCE, BasicAttributeFormatter.scaled(10D));
+		register(CyberAttributes.LOAD.get(), BasicAttributeFormatter.INVERTED);
 		register(CyberAttributes.MAX_ZOOM.get(), SuffixedAttributeFormatter.TIMES);
 		register(CyberAttributes.MOTION_TRACKER_RANGE.get(), SuffixedAttributeFormatter.METERS);
 		register(CyberAttributes.TRACKING_DURATION.get(), SuffixedAttributeFormatter.SECONDS);

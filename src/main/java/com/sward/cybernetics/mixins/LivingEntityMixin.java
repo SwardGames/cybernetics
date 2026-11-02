@@ -1,7 +1,9 @@
 package com.sward.cybernetics.mixins;
 
 import com.sward.cybernetics.attributes.CyberAttributes;
+import com.sward.cybernetics.capabilities.ICyberneticsInventory;
 import com.sward.cybernetics.entities.IMotionTrackable;
+import com.sward.cybernetics.items.CyberItemTags;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Entity;
@@ -13,6 +15,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.Optional;
 
 @Mixin(value = LivingEntity.class, remap = true)
 public abstract class LivingEntityMixin extends Entity implements IMotionTrackable
@@ -33,8 +37,8 @@ public abstract class LivingEntityMixin extends Entity implements IMotionTrackab
 
 		LocalPlayer player = Minecraft.getInstance().player;
 
-		// Require the player to exist
-		if (player == null || !player.isAlive())
+		// Require the player to exist, is not the entity, and is alive
+		if (player == null || player == (Entity)this || !player.isAlive())
 		{
 			return;
 		}
@@ -80,6 +84,19 @@ public abstract class LivingEntityMixin extends Entity implements IMotionTrackab
 	public boolean cybernetics$isTracked()
 	{
 		return this.cybernetics$trackingTime > 0;
+	}
+
+	@Override
+	public boolean isSteppingCarefully()
+	{
+		Optional<ICyberneticsInventory> inv = getCapability(ICyberneticsInventory.CAP).resolve();
+
+		if (inv.isPresent() && inv.get().contains(CyberItemTags.SILENCES_FOOTSTEPS))
+		{
+			return !isSprinting();
+		}
+
+		return super.isSteppingCarefully();
 	}
 
 	private LivingEntityMixin(EntityType<?> pEntityType, Level pLevel)

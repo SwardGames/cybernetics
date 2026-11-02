@@ -23,7 +23,7 @@ public interface OnImplanted
 		@Override
 		public void implanted(ItemStack stack, LivingEntity entity)
 		{
-			for (OnImplanted component : components)
+			for (OnImplanted component : this.components)
 			{
 				component.implanted(stack, entity);
 			}

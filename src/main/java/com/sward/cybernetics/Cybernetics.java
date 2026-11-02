@@ -7,10 +7,7 @@ import com.sward.cybernetics.compat.curios.components.CuriosSlotsComponent;
 import com.sward.cybernetics.config.CyberConfig;
 import com.sward.cybernetics.cybernetics.CyberneticDefinition;
 import com.sward.cybernetics.cybernetics.ICyberneticComponent;
-import com.sward.cybernetics.cybernetics.components.AttributeModifiersComponent;
-import com.sward.cybernetics.cybernetics.components.DescriptionComponent;
-import com.sward.cybernetics.cybernetics.components.IncompatibleImplantTagComponent;
-import com.sward.cybernetics.cybernetics.components.RequiredImplantTagComponent;
+import com.sward.cybernetics.cybernetics.components.*;
 import com.sward.cybernetics.registries.CyberRegistries;
 import com.sward.cybernetics.attributes.CyberAttributes;
 import com.sward.cybernetics.blocks.CyberBlocks;
@@ -28,7 +25,6 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -39,8 +35,6 @@ import net.minecraftforge.registries.*;
 import org.slf4j.Logger;
 
 import java.util.Optional;
-
-import static com.sward.cybernetics.capabilities.ICyberneticsInventory.CAP;
 
 @Mod(Cybernetics.ID)
 public final class Cybernetics
@@ -65,7 +59,6 @@ public final class Cybernetics
 		modEventBus.addListener(Cybernetics::newDataPackRegistries);
 		modEventBus.addListener(Cybernetics::registerEvent);
 
-		MinecraftForge.EVENT_BUS.addListener(Cybernetics::tickPlayer);
 		MinecraftForge.EVENT_BUS.addListener(Cybernetics::sleepingTimeCheck);
 		MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, Cybernetics::attachEntityCapabilities);
 	}
@@ -112,6 +105,12 @@ public final class Cybernetics
 
 		e.register(
 			CyberRegistryKeys.CYBERNETIC_COMPONENT_CODECS,
+			id("when_implanted_tooltip"),
+			() -> WhenImplantedTooltipComponent.CODEC
+		);
+
+		e.register(
+			CyberRegistryKeys.CYBERNETIC_COMPONENT_CODECS,
 			id("incompatible_implant_tag"),
 			() -> IncompatibleImplantTagComponent.CODEC
 		);
@@ -122,6 +121,30 @@ public final class Cybernetics
 			() -> RequiredImplantTagComponent.CODEC
 		);
 
+		e.register(
+			CyberRegistryKeys.CYBERNETIC_COMPONENT_CODECS,
+			id("damage_modifier"),
+			() -> DamageModifierComponent.CODEC
+		);
+
+		e.register(
+			CyberRegistryKeys.CYBERNETIC_COMPONENT_CODECS,
+			id("rear_damage_reduction"),
+			() -> RearDamageReductionComponent.CODEC
+		);
+
+		e.register(
+			CyberRegistryKeys.CYBERNETIC_COMPONENT_CODECS,
+			id("unarmed_knockback"),
+			() -> UnarmedKnockbackComponent.CODEC
+		);
+
+		e.register(
+			CyberRegistryKeys.CYBERNETIC_COMPONENT_CODECS,
+			id("resuscitator"),
+			() -> ResuscitatorComponent.CODEC
+		);
+
 		if (AddonsPresent.CURIOS)
 		{
 			e.register(
@@ -130,18 +153,6 @@ public final class Cybernetics
 				() -> CuriosSlotsComponent.CODEC
 			);
 		}
-	}
-
-	private static void tickPlayer(TickEvent.PlayerTickEvent e)
-	{
-		Optional<ICyberneticsInventory> cap = e.player.getCapability(CAP).resolve();
-
-		if (cap.isEmpty())
-		{
-			return;
-		}
-
-		cap.get().tick();
 	}
 
 	private static void sleepingTimeCheck(SleepingTimeCheckEvent e)

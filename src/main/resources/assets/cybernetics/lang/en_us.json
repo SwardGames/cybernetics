@@ -42,7 +42,9 @@
 	"item.cybernetics.padded_soles.desc": "This shock-absorbing padding attached to the soles of your feet cancels out the sound of walking.",
 
 	"item.cybernetics.resuscitator": "Resuscitator",
-	"item.cybernetics.resuscitator.desc": "A miniaturized defibrillator which will restart your heart on death.",
+	"item.cybernetics.resuscitator.desc": "An automatic defibrillator which will restart your heart on death.",
+	"item.cybernetics.arc_reactor": "Arc Reactor",
+	"item.cybernetics.arc_reactor.desc": "A miniaturized fusion reactor which provides unlimited energy.",
 
 	"item.cybernetics.blood_filter": "Blood Filter",
 	"item.cybernetics.blood_filter.desc": "Neutralizes harmful compounds from the bloodstream.",
@@ -72,6 +74,14 @@
 	"tag.cybernetics.cybernetic_type.eye": "Any Cyber Eyes",
 	"tag.cybernetics.cybernetic_type.bone": "Any Bone Augments",
 
+	"tag.minecraft.is_fire": "Fire",
+	"tag.minecraft.is_projectile": "Projectile",
+	"tag.minecraft.is_explosion": "Explosion",
+	"tag.minecraft.is_fall": "Fall",
+	"tag.minecraft.is_drowning": "Drowning",
+	"tag.minecraft.is_freezing": "Freezing",
+	"tag.minecraft.is_lightning": "Lightning",
+
 	"cybernetics_group.nervous_system": "Nervous System",
 	"cybernetics_group.arms": "Arms",
 	"cybernetics_group.legs": "Legs",
@@ -100,5 +110,12 @@
 	"tooltip.cybernetics.required_implant": "Requires: %s",
 	"tooltip.cybernetics.incompatible_implant": "Incompatible with: %s",
 	"tooltip.cybernetics.capacity_cost": "Cybernetic Load: %s",
-	"tooltip.cybernetics.modifiers": "When implanted:"
+	"tooltip.cybernetics.modifiers": "When implanted:",
+	"tooltip.cybernetics.damage_modifier.false": "+%s%% %s Damage Taken",
+	"tooltip.cybernetics.damage_modifier.true": "-%s%% %s Damage Taken",
+	"tooltip.cybernetics.damage_modifier.generic.false": "+%s%% Damage Taken",
+	"tooltip.cybernetics.damage_modifier.generic.true": "-%s%% Damage Taken",
+	"tooltip.cybernetics.silences_footsteps": "Silences Footsteps",
+	"tooltip.cybernetics.rear_damage_reduction": "-%s%% Damage from back attacks",
+	"tooltip.cybernetics.resuscitator": "Survive a lethal hit with %s health (%ss cooldown)"
 }

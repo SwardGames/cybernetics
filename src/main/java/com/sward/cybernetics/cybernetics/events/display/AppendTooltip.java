@@ -68,7 +68,7 @@ public interface AppendTooltip
 		{
 			int prevPriority = this.components.get(0).tooltipPriority();
 
-			for (AppendTooltip component : components)
+			for (AppendTooltip component : this.components)
 			{
 				int priority = component.tooltipPriority();
 

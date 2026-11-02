@@ -6,6 +6,15 @@
 			"text": "item.cybernetics.extra_finger.desc"
 		},
 		{
+			"type": "cybernetics:attribute_modifiers",
+			"modifiers": [
+				{
+					"attribute": "cybernetics:cybernetic_load",
+					"amount": 10
+				}
+			]
+		},
+		{
 			"type": "cybernetics:curios_slots",
 			"slots": [
 				{
