@@ -4,7 +4,6 @@ import com.sward.cybernetics.cybernetics.Event;
 import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 
 import javax.annotation.ParametersAreNonnullByDefault;

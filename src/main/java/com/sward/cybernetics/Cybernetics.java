@@ -17,6 +17,7 @@ import com.sward.cybernetics.items.CyberCreativeTabs;
 import com.sward.cybernetics.items.CyberItems;
 import com.sward.cybernetics.inventory.CyberMenuTypes;
 import com.sward.cybernetics.registries.CyberRegistryKeys;
+import com.sward.cybernetics.tooltips.CyberneticTooltipCategory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -47,6 +48,7 @@ public final class Cybernetics
 		IEventBus modEventBus = ctx.getModEventBus();
 
 		CyberConfig.init();
+		CyberneticTooltipCategory.register();
 
 		CyberAttributes.REGISTER.register(modEventBus);
 		CyberBlocks.REGISTER.register(modEventBus);
@@ -143,6 +145,12 @@ public final class Cybernetics
 			CyberRegistryKeys.CYBERNETIC_COMPONENT_CODECS,
 			id("resuscitator"),
 			() -> ResuscitatorComponent.CODEC
+		);
+
+		e.register(
+			CyberRegistryKeys.CYBERNETIC_COMPONENT_CODECS,
+			id("apply_effect_on_hurt"),
+			() -> ApplyEffectOnHurtComponent.CODEC
 		);
 
 		if (AddonsPresent.CURIOS)

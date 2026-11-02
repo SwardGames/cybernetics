@@ -17,7 +17,7 @@
 		{
 			"type": "cybernetics:damage_modifier",
 			"amount": 0.25,
-			"damage_type": "minecraft:is_lightning"
+			"damage_type_tag": "minecraft:is_lightning"
 		}
 	]
 }

@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.sward.cybernetics.cybernetics.ICyberneticComponent;
 import com.sward.cybernetics.cybernetics.events.display.AppendTooltip;
+import com.sward.cybernetics.tooltips.CyberneticTooltipCategory;
 import net.minecraft.ChatFormatting;
 import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
@@ -33,14 +34,11 @@ public record DescriptionComponent(String text) implements ICyberneticComponent,
 	}
 
 	@Override
-	public int tooltipPriority()
+	public void appendTooltip(CyberneticTooltipCategory category, List<Component> tooltip, ItemStack stack, @Nullable Player player, boolean isAdvanced)
 	{
-		return 10000;
-	}
-
-	@Override
-	public void appendTooltip(List<Component> tooltip, ItemStack stack, @Nullable Player player, boolean isAdvanced)
-	{
-		tooltip.add(Component.translatable(this.text).withStyle(ChatFormatting.GRAY));
+		if (category == CyberneticTooltipCategory.FLAVOR)
+		{
+			tooltip.add(Component.translatable(this.text).withStyle(ChatFormatting.GRAY));
+		}
 	}
 }

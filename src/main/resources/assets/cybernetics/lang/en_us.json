@@ -110,12 +110,15 @@
 	"tooltip.cybernetics.required_implant": "Requires: %s",
 	"tooltip.cybernetics.incompatible_implant": "Incompatible with: %s",
 	"tooltip.cybernetics.capacity_cost": "Cybernetic Load: %s",
-	"tooltip.cybernetics.modifiers": "When implanted:",
+	"tooltip.cybernetics.when_implanted": "When implanted:",
+	"tooltip.cybernetics.when_implanted_and_hurt": "When implanted and hurt:",
 	"tooltip.cybernetics.damage_modifier.false": "+%s%% %s Damage Taken",
 	"tooltip.cybernetics.damage_modifier.true": "-%s%% %s Damage Taken",
 	"tooltip.cybernetics.damage_modifier.generic.false": "+%s%% Damage Taken",
 	"tooltip.cybernetics.damage_modifier.generic.true": "-%s%% Damage Taken",
 	"tooltip.cybernetics.silences_footsteps": "Silences Footsteps",
+	"tooltip.cybernetics.apply_effect": "Apply %s",
+	"tooltip.cybernetics.unarmed_knockback": "+%s Unarmed Knockback",
 	"tooltip.cybernetics.rear_damage_reduction": "-%s%% Damage from back attacks",
 	"tooltip.cybernetics.resuscitator": "Survive a lethal hit with %s health (%ss cooldown)"
 }

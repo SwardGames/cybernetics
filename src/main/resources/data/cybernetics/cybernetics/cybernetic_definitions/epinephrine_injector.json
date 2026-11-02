@@ -1,0 +1,36 @@
+{
+	"slot": "nervous_system",
+	"components": [
+		{
+			"type": "cybernetics:description",
+			"text": "item.cybernetics.epinephrine_injector.desc"
+		},
+		{
+			"type": "cybernetics:attribute_modifiers",
+			"modifiers": [
+				{
+					"attribute": "cybernetics:cybernetic_load",
+					"amount": 9
+				}
+			]
+		},
+		{
+			"type": "cybernetics:apply_effect_on_hurt",
+			"effect": "minecraft:speed",
+			"duration": 100,
+			"amplifier": 1
+		},
+		{
+			"type": "cybernetics:apply_effect_on_hurt",
+			"effect": "minecraft:haste",
+			"duration": 100,
+			"amplifier": 1
+		},
+		{
+			"type": "cybernetics:apply_effect_on_hurt",
+			"effect": "minecraft:strength",
+			"duration": 100,
+			"amplifier": 1
+		}
+	]
+}

@@ -1,6 +1,5 @@
 package com.sward.cybernetics.capabilities;
 
-import com.mojang.datafixers.util.Function3;
 import com.sward.cybernetics.cybernetics.Event;
 import com.sward.cybernetics.util.Consumer3;
 import net.minecraft.nbt.CompoundTag;

@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.sward.cybernetics.cybernetics.ICyberneticComponent;
 import com.sward.cybernetics.cybernetics.events.implanting.CanImplant;
 import com.sward.cybernetics.cybernetics.events.display.AppendTooltip;
+import com.sward.cybernetics.tooltips.CyberneticTooltipCategory;
 import net.minecraft.ChatFormatting;
 import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
@@ -48,14 +49,19 @@ public record IncompatibleImplantTagComponent(TagKey<Item> tag) implements ICybe
 	}
 
 	@Override
-	public int tooltipPriority()
+	public void appendTooltip(
+		CyberneticTooltipCategory category,
+		List<Component> tooltip,
+		ItemStack stack,
+		@Nullable Player player,
+		boolean isAdvanced
+	)
 	{
-		return 8400;
-	}
+		if (category != CyberneticTooltipCategory.REQUIREMENTS)
+		{
+			return;
+		}
 
-	@Override
-	public void appendTooltip(List<Component> tooltip, ItemStack stack, @Nullable Player player, boolean isAdvanced)
-	{
 		ResourceLocation location = this.tag.location();
 
 		tooltip.add(

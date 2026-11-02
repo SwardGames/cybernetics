@@ -3,8 +3,9 @@ package com.sward.cybernetics.cybernetics.components;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.sward.cybernetics.cybernetics.ICyberneticComponent;
+import com.sward.cybernetics.cybernetics.events.display.AppendTooltip;
 import com.sward.cybernetics.cybernetics.events.reaction.OnUserHurt;
-import com.sward.cybernetics.cybernetics.events.display.AppendWhenImplantedTooltip;
+import com.sward.cybernetics.tooltips.CyberneticTooltipCategory;
 import net.minecraft.ChatFormatting;
 import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
@@ -27,7 +28,7 @@ import static net.minecraft.world.item.ItemStack.ATTRIBUTE_MODIFIER_FORMAT;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public record RearDamageReductionComponent(float amount) implements ICyberneticComponent,
-	OnUserHurt, AppendWhenImplantedTooltip
+	OnUserHurt, AppendTooltip
 {
 	public static final Codec<RearDamageReductionComponent> CODEC = RecordCodecBuilder.create(
 		instance -> instance.group(
@@ -67,21 +68,20 @@ public record RearDamageReductionComponent(float amount) implements ICyberneticC
 			event.setAmount(event.getAmount() * (1F - this.amount));
 		}
 	}
-
 	@Override
-	public int whenImplantedTooltipPriority()
-	{
-		return 500;
-	}
-
-	@Override
-	public void appendWhenImplantedTooltip(
+	public void appendTooltip(
+		CyberneticTooltipCategory category,
 		List<Component> tooltip,
 		ItemStack stack,
 		@Nullable Player player,
 		boolean isAdvanced
 	)
 	{
+		if (category != CyberneticTooltipCategory.WHEN_IMPLANTED)
+		{
+			return;
+		}
+
 		tooltip.add(
 			Component.translatable(
 				"tooltip.cybernetics.rear_damage_reduction",

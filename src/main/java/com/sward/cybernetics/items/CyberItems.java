@@ -34,6 +34,7 @@ public final class CyberItems
 	public static final RegistryObject<Item> REFLEX_BYPASS = cybernetic("reflex_bypass");
 	public static final RegistryObject<Item> SHINOBI_MODULE = cybernetic("shinobi_module");
 	public static final RegistryObject<Item> MNEMONIC_TRACKER = cybernetic("mnemonic_tracker");
+	public static final RegistryObject<Item> EPINEPHRINE_INJECTOR = cybernetic("epinephrine_injector");
 
 	// Arms
 
@@ -42,6 +43,7 @@ public final class CyberItems
 	public static final RegistryObject<Item> IMPACT_KNUCKLES = cybernetic("impact_knuckles");
 
 	// Legs
+	public static final RegistryObject<Item> SHOCK_ABSORBING_THIGHS = cybernetic("shock_absorbing_thighs");
 
 	// Feet
 	public static final RegistryObject<Item> PADDED_SOLES = cybernetic("padded_soles");

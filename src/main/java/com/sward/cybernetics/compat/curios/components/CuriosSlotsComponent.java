@@ -6,9 +6,10 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.sward.cybernetics.AddonsPresent;
 import com.sward.cybernetics.cybernetics.ICyberneticComponent;
+import com.sward.cybernetics.cybernetics.events.display.AppendTooltip;
 import com.sward.cybernetics.cybernetics.events.implanting.OnImplanted;
-import com.sward.cybernetics.cybernetics.events.display.AppendWhenImplantedTooltip;
 import com.sward.cybernetics.cybernetics.events.implanting.OnUnimplanted;
+import com.sward.cybernetics.tooltips.CyberneticTooltipCategory;
 import com.sward.cybernetics.util.AttributeModifierCodec;
 import net.minecraft.ChatFormatting;
 import net.minecraft.FieldsAreNonnullByDefault;
@@ -33,7 +34,7 @@ import static net.minecraft.world.item.ItemStack.ATTRIBUTE_MODIFIER_FORMAT;
 public record CuriosSlotsComponent(
 	List<SlotModifierDefinition> slotsList,
 	Multimap<String, AttributeModifier> slotModifiers
-) implements ICyberneticComponent, OnImplanted, OnUnimplanted, AppendWhenImplantedTooltip
+) implements ICyberneticComponent, OnImplanted, OnUnimplanted, AppendTooltip
 {
 	public static final Codec<CuriosSlotsComponent> CODEC = RecordCodecBuilder.create(
 		instance -> instance.group(
@@ -77,14 +78,13 @@ public record CuriosSlotsComponent(
 	}
 
 	@Override
-	public int whenImplantedTooltipPriority()
+	public void appendTooltip(CyberneticTooltipCategory category, List<Component> tooltip, ItemStack stack, @Nullable Player player, boolean isAdvanced)
 	{
-		return 1000;
-	}
+		if (category != CyberneticTooltipCategory.WHEN_IMPLANTED)
+		{
+			return;
+		}
 
-	@Override
-	public void appendWhenImplantedTooltip(List<Component> tooltip, ItemStack stack, @Nullable Player player, boolean isAdvanced)
-	{
 		for (SlotModifierDefinition definition : this.slotsList)
 		{
 			String slot = definition.slot;

@@ -1,6 +1,5 @@
 package com.sward.cybernetics.inventory;
 
-import com.mojang.datafixers.util.Function3;
 import com.sward.cybernetics.config.CyberConfig;
 import com.sward.cybernetics.config.CyberSlotType;
 import com.sward.cybernetics.config.CyberSlotGroup;
@@ -16,7 +15,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Getter;
-import me.fzzyhmstrs.fzzy_config.validation.collection.ValidatedList;
 import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.NonNullList;
@@ -32,7 +30,6 @@ import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
-import java.util.function.Consumer;
 
 @FieldsAreNonnullByDefault
 @ParametersAreNonnullByDefault

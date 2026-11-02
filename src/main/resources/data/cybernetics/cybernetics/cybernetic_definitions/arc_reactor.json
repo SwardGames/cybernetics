@@ -17,7 +17,7 @@
 		{
 			"type": "cybernetics:damage_modifier",
 			"amount": -0.05,
-			"damage_type": "minecraft:is_explosion"
+			"damage_type_tag": "minecraft:is_explosion"
 		}
 	]
 }

@@ -3,8 +3,9 @@ package com.sward.cybernetics.cybernetics.components;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.sward.cybernetics.cybernetics.ICyberneticComponent;
-import com.sward.cybernetics.cybernetics.events.display.AppendWhenImplantedTooltip;
+import com.sward.cybernetics.cybernetics.events.display.AppendTooltip;
 import com.sward.cybernetics.cybernetics.events.reaction.OnInflictingKnockback;
+import com.sward.cybernetics.tooltips.CyberneticTooltipCategory;
 import net.minecraft.ChatFormatting;
 import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
@@ -24,7 +25,7 @@ import static net.minecraft.world.item.ItemStack.ATTRIBUTE_MODIFIER_FORMAT;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public record UnarmedKnockbackComponent(float strength)
-	implements ICyberneticComponent, OnInflictingKnockback, AppendWhenImplantedTooltip
+	implements ICyberneticComponent, OnInflictingKnockback, AppendTooltip
 {
 	public static final Codec<UnarmedKnockbackComponent> CODEC = RecordCodecBuilder.create(
 		instance -> instance.group(
@@ -48,22 +49,22 @@ public record UnarmedKnockbackComponent(float strength)
 	}
 
 	@Override
-	public int whenImplantedTooltipPriority()
-	{
-		return 500;
-	}
-
-	@Override
-	public void appendWhenImplantedTooltip(
+	public void appendTooltip(
+		CyberneticTooltipCategory category,
 		List<Component> tooltip,
 		ItemStack stack,
 		@Nullable Player player,
 		boolean isAdvanced
 	)
 	{
+		if (category != CyberneticTooltipCategory.WHEN_IMPLANTED)
+		{
+			return;
+		}
+
 		tooltip.add(
 			Component.translatable(
-				"tooltip.cybernetics.knockback",
+				"tooltip.cybernetics.unarmed_knockback",
 				ATTRIBUTE_MODIFIER_FORMAT.format(this.strength)
 			).withStyle(ChatFormatting.BLUE)
 		);
